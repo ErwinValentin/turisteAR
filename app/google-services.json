@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "188282368656",
+    "firebase_url": "https://touristear-1c17c.firebaseio.com",
+    "project_id": "touristear-1c17c",
+    "storage_bucket": "touristear-1c17c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188282368656:android:a554d0c7dce1ef61b8de15",
+        "android_client_info": {
+          "package_name": "com.valentingonzalez.turistear"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188282368656-5snqakdqsmeskbpmoi2u2kcdqih1p0kf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.valentingonzalez.turistear",
+            "certificate_hash": "86208711f0ddb49ed20c972b22eed8c63d906bb5"
+          }
+        },
+        {
+          "client_id": "188282368656-1g5k0gap82k8hhc74dgu68jbtfie76rf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk13VZlT77JgR9CdsUK3m2m9d2IHhJrLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188282368656-1g5k0gap82k8hhc74dgu68jbtfie76rf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

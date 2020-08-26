@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">TuristeAR</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDwmi98HD3mliJH3jKrxxC3sfU5sOrHEQg</string>
+    <string name="pass_hint">Contraseña</string>
+    <string name="name_hint">Nombre</string>
+    <string name="email_hint">email</string>
+    <string name="login_button_text">Iniciar Sesión</string>
+    <string name="create_button_text">Registrarse</string>
+    <string name="create_new_acc_button_text">Crear Cuenta</string>
+</resources>
