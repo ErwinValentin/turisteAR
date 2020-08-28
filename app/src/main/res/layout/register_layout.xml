@@ -30,7 +30,7 @@
             android:id="@+id/appCompatImageView"
             android:layout_width="@dimen/logo_login_size"
             android:layout_height="@dimen/logo_login_size"
-            android:src="@drawable/map_icon"
+            android:src="@drawable/map_transparent"
             app:layout_constraintBottom_toTopOf="@+id/emailTil"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
