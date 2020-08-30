@@ -17,7 +17,7 @@ import com.valentingonzalez.turistear.providers.AuthProvider
 import dmax.dialog.SpotsDialog
 
 class LoginActivity : AppCompatActivity() {
-    var mAuthProvider: AuthProvider? = null
+    lateinit var mAuthProvider: AuthProvider
     var mLoginButton: MaterialButton? = null
     var mRegisterButton: MaterialButton? = null
     var emailTIET: TextInputEditText? = null
@@ -28,6 +28,12 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_layout)
+
+        mAuthProvider = AuthProvider()
+        if(mAuthProvider.currentUser()!=null){
+            startActivity(Intent(this@LoginActivity, MapsActivity::class.java))
+        }
+
         emailTIET = findViewById(R.id.emailTiet)
         passwordTIET = findViewById(R.id.passTiet)
         emailTIL = findViewById(R.id.emailTil)
@@ -48,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
 
             override fun afterTextChanged(editable: Editable) {}
         })
-        mAuthProvider = AuthProvider()
+
         progessDialog = SpotsDialog.Builder().setContext(this@LoginActivity).setMessage("Conectando...").build()
         mLoginButton = findViewById(R.id.login_button)
         mLoginButton?.setOnClickListener{ login() }
