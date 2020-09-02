@@ -20,6 +20,10 @@ import com.valentingonzalez.turistear.activities.camera.CameraActivity1
 import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
+import com.valentingonzalez.turistear.models.Recurso
+import com.valentingonzalez.turistear.models.Secreto
+import com.valentingonzalez.turistear.models.Sitio
+import com.valentingonzalez.turistear.providers.SiteProvider
 
 class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -38,7 +42,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
 
         navView = findViewById(R.id.maps_navigation_view)
         navView.setNavigationItemSelectedListener(this)
-
+        //testCreateSitio()
         val account_icon:ImageView = findViewById(R.id.toolbar_account_icon)
         account_icon.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -50,6 +54,15 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
+    }
+
+    private fun testCreateSitio() {
+        val recList = listOf<Recurso>(Recurso("image", "SDFGHJKL.jpg"),Recurso("image", "SDFGHJKL.jpg"))
+        val site = Sitio("prueba formato", 14.685027f,-90.550995f, "prueba movil", recList, "Museo")
+
+        val secList = listOf(Secreto("el secreto1", 14.685027f,-90.550995f,"NombreSecreto1",recList),Secreto("el secreto2", 14.685027f,-90.550995f,"NombreSecreto2",recList),Secreto("el secreto3", 14.685027f,-90.550995f,"NombreSecreto3",recList))
+        val siteProvider = SiteProvider()
+        siteProvider.createSite(site,secList)
     }
 
     private fun allPermisionsGranted() = REQUIRED_PERMISSIONS.all {

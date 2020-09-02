@@ -12,7 +12,7 @@ class UserProvider {
     var mFirebaseDatabase: DatabaseReference
     fun createUser(usuario: Usuario): Task<Void> {
         val map: MutableMap<String, Any?> = HashMap()
-        map["name"] = usuario.name
+        map["name"] = usuario.nombre
         map["email"] = usuario.email
         return mFirebaseDatabase.child(usuario.id!!).setValue(map)
     }
@@ -23,7 +23,7 @@ class UserProvider {
         mFirebaseDatabase.child(currentUser).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val u = snapshot.getValue(Usuario::class.java)!!
-                nameView.text = u.name
+                nameView.text = u.nombre
             }
 
             override fun onCancelled(error: DatabaseError) {}

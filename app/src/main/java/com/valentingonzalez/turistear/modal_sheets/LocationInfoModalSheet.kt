@@ -18,16 +18,17 @@ import com.valentingonzalez.turistear.providers.UserProvider
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
 
 class LocationInfoModalSheet : BottomSheetDialogFragment() {
-
+    private lateinit var locationID: String
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.modal_sheet_v2, container, false)
         val b = arguments
         val nv = layout.findViewById<TextView>(R.id.modal_location_title_tv)
-        val show_hide = layout.findViewById<ImageView>(R.id.show_secrets)
-
+        val show_secrets = layout.findViewById<ImageView>(R.id.show_secrets)
+        locationID = b?.getString("location").toString()
         val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
-        show_hide.setOnClickListener{
-            //TODO start detail activity
+        show_secrets.setOnClickListener{
+            val b = Bundle()
+            b.putString("location",locationID)
         }
 
         /*val userProvider = UserProvider()

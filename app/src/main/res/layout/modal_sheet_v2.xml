@@ -25,8 +25,8 @@
 
     <ImageView
         android:id="@+id/show_secrets"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:src="@drawable/open_chest_m"
         app:layout_constraintBottom_toTopOf="@+id/secrets_amount"
         app:layout_constraintEnd_toEndOf="parent"
