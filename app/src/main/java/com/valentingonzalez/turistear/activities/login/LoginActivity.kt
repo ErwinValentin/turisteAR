@@ -85,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
             return
         }
         progessDialog!!.show()
-        mAuthProvider!!.login(email, pass).addOnCompleteListener { task ->
+        mAuthProvider.login(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 startActivity(Intent(this@LoginActivity, MapsActivity::class.java))
             } else {

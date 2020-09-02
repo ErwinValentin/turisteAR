@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/site_comment_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comentar_sobre_sitio"
+        style="@style/title"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/review_comment_til">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Reseña"
+            android:id="@+id/review_comment_tiet"/>
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

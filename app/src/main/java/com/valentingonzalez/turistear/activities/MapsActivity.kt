@@ -3,11 +3,17 @@ package com.valentingonzalez.turistear.activities
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.maps.model.Marker
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.camera.CameraActivity1
@@ -15,10 +21,28 @@ import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
 
-class MapsActivity : AppCompatActivity(), MarkerClickedListener {
+class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener {
+
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var actionbarToggle: ActionBarDrawerToggle
+    private lateinit var navView: NavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+        drawerLayout = findViewById(R.id.maps_activity_drawer)
+        actionbarToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer)
+
+        drawerLayout.addDrawerListener(actionbarToggle)
+        actionbarToggle.syncState()
+
+        navView = findViewById(R.id.maps_navigation_view)
+        navView.setNavigationItemSelectedListener(this)
+
+        val account_icon:ImageView = findViewById(R.id.toolbar_account_icon)
+        account_icon.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if(allPermisionsGranted()){
             loadMap()
@@ -76,5 +100,21 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 9001
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            R.id.nav_menu_favs->{
+                Toast.makeText(this, "Clicked on Favorites", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_menu_visited->{
+                Toast.makeText(this, "Clicked on Visited", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_menu_settings->{
+                Toast.makeText(this, "Clicked on Settings", Toast.LENGTH_SHORT).show()
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 }

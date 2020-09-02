@@ -1,30 +1,39 @@
 package com.valentingonzalez.turistear.modal_sheets
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.camera.CameraActivity1
 import com.valentingonzalez.turistear.providers.UserProvider
+import kotlinx.android.synthetic.main.modal_sheet_v2.*
 
 class LocationInfoModalSheet : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val layout = inflater.inflate(R.layout.info_modal_sheet, container, false)
+        val layout = inflater.inflate(R.layout.modal_sheet_v2, container, false)
         val b = arguments
         val nv = layout.findViewById<TextView>(R.id.modal_location_title_tv)
+        val show_hide = layout.findViewById<ImageView>(R.id.show_secrets)
+
+        val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
+        show_hide.setOnClickListener{
+            //TODO start detail activity
+        }
+
         /*val userProvider = UserProvider()
         userProvider.getUser(nv)*/
 
-        val cameraButton : ImageButton = layout.findViewById(R.id.open_camera_here_button)
+     /*   val cameraButton : ImageButton = layout.findViewById(R.id.open_camera_here_button)
         cameraButton.setOnClickListener{
             startActivity( Intent(activity,CameraActivity1::class.java))
         }
@@ -52,7 +61,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment() {
                 favoriteIcon.setImageResource(R.drawable.ic_star_border_light_green_600_24dp)
                 it.tag = 1
             }
-        }
+        }*/
         return layout
     }
 }

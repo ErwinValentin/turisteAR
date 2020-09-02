@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/locations"
+        >
+        <item android:id="@+id/nav_menu_favs"
+            android:icon="@drawable/ic_favorite_border_black_24dp"
+            android:title="Mis Favoritos"/>
+        <item android:id="@+id/nav_menu_visited"
+            android:icon="@drawable/ic_location_on_black_24dp"
+            android:title="Sitios Visitados"/>
+    </group>
+    <group android:id="@+id/settings">
+        <item android:id="@+id/nav_menu_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="Configuraciones"/>
+    </group>
+
+
+</menu>
