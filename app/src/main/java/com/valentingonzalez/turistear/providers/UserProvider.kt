@@ -9,18 +9,18 @@ import com.valentingonzalez.turistear.models.Usuario
 import java.util.*
 
 class UserProvider {
-    var mFirebaseDatabase: DatabaseReference
+    var mUserReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Usuarios")
     fun createUser(usuario: Usuario): Task<Void> {
         val map: MutableMap<String, Any?> = HashMap()
         map["name"] = usuario.nombre
         map["email"] = usuario.email
-        return mFirebaseDatabase.child(usuario.id!!).setValue(map)
+        return mUserReference.child(usuario.id!!).setValue(map)
     }
 
     fun getUser(nameView: TextView) {
         val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
         Log.d("PROVIDER", currentUser)
-        mFirebaseDatabase.child(currentUser).addValueEventListener(object : ValueEventListener {
+        mUserReference.child(currentUser).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val u = snapshot.getValue(Usuario::class.java)!!
                 nameView.text = u.nombre
@@ -30,7 +30,4 @@ class UserProvider {
         })
     }
 
-    init {
-        mFirebaseDatabase = FirebaseDatabase.getInstance().reference.child("Usuarios")
-    }
 }

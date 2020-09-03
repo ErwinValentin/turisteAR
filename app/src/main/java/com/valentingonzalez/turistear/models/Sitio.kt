@@ -1,7 +1,8 @@
 package com.valentingonzalez.turistear.models
 
 class Sitio {
-    constructor(descripcion: String?, latitud: Float?, longitud: Float?, nombre: String?, recursos: List<Recurso>?, tipo: String?) {
+    constructor() {}
+    constructor(descripcion: String?, latitud: Double?, longitud: Double?, nombre: String?, recursos: List<Recurso>?, tipo: String?) {
         this.descripcion = descripcion
         this.latitud = latitud
         this.longitud = longitud
@@ -11,8 +12,8 @@ class Sitio {
     }
 
     var descripcion: String? = null
-    var latitud: Float? = null
-    var longitud: Float? = null
+    var latitud: Double? = null
+    var longitud: Double? = null
     var nombre: String? = null
     var recursos: List<Recurso>? = null
     var tipo: String? = null

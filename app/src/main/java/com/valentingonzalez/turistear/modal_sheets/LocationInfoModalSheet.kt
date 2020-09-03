@@ -1,36 +1,53 @@
 package com.valentingonzalez.turistear.modal_sheets
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
+import com.valentingonzalez.turistear.activities.SecretDetailActivity
 import com.valentingonzalez.turistear.activities.camera.CameraActivity1
-import com.valentingonzalez.turistear.providers.UserProvider
+import com.valentingonzalez.turistear.providers.AuthProvider
+import com.valentingonzalez.turistear.providers.SiteProvider
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
 
-class LocationInfoModalSheet : BottomSheetDialogFragment() {
+class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.DiscoveredSites {
+
     private lateinit var locationID: String
+    private var siteProvider: SiteProvider = SiteProvider(this)
+    private var mFirebaseAuth: AuthProvider = AuthProvider()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        //TODO get secret amount from user, show on layout
         val layout = inflater.inflate(R.layout.modal_sheet_v2, container, false)
         val b = arguments
-        val nv = layout.findViewById<TextView>(R.id.modal_location_title_tv)
-        val show_secrets = layout.findViewById<ImageView>(R.id.show_secrets)
-        locationID = b?.getString("location").toString()
-        val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
-        show_secrets.setOnClickListener{
-            val b = Bundle()
-            b.putString("location",locationID)
+        val titleView = layout.findViewById<TextView>(R.id.modal_location_title_tv)
+        val descView = layout.findViewById<TextView>(R.id.modal_location_description)
+        val showSecrets = layout.findViewById<ImageView>(R.id.show_secrets)
+        //val secretsAmount = layout.findViewById<TextView>(R.id.secrets_amount)
+        //locationID = b?.getString("location").toString()
+        //val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
+        val currLocation: String = b?.getString(getString(R.string.marker_location_key))!!
+        if(mFirebaseAuth.currentUser()!=null){
+            siteProvider.getSiteDiscoveredSecrets(FirebaseAuth.getInstance().currentUser!!.uid, currLocation)
+        }
+        showSecrets.setOnClickListener{
+            val intent = Intent(context, SecretDetailActivity::class.java)
+            intent.putExtra(getString(R.string.marker_location_key), currLocation)
+            startActivity(intent)
         }
 
+        titleView.setText(b.getString(getString(R.string.marker_title)))
+        descView.setText(b.getString(getString(R.string.marker_description)))
+        val openCamera: ImageButton = layout.findViewById(R.id.modal_camera_button)
+        openCamera.setOnClickListener{
+            val intent = Intent(context, CameraActivity1::class.java)
+            intent.putExtra(getString(R.string.marker_location_key), currLocation)
+            startActivity(intent)
+        }
         /*val userProvider = UserProvider()
         userProvider.getUser(nv)*/
 
@@ -64,5 +81,10 @@ class LocationInfoModalSheet : BottomSheetDialogFragment() {
             }
         }*/
         return layout
+    }
+
+    override fun onDiscovered(lista: List<Boolean>) {
+        val count = lista.count{ it }
+        secrets_amount.text = "$count/3"
     }
 }

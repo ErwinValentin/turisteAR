@@ -13,17 +13,20 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.valentingonzalez.turistear.models.Sitio
+import com.valentingonzalez.turistear.providers.SiteProvider
 
-class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener {
+class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener, SiteProvider.DiscoveredSites {
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var currentLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var mListener: MarkerClickedListener? = null
+    private var siteProvider: SiteProvider = SiteProvider(this)
     var guate: Marker? = null
+    var marcadores: HashMap<Marker,Sitio> = HashMap()
     override fun onAttach(activity: Activity) {
         super.onAttach(activity)
         mListener = if (activity is MarkerClickedListener) {
@@ -51,36 +54,45 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
         mGoogleMap.setOnPoiClickListener{poi->
             Toast.makeText(context!!,poi.name,Toast.LENGTH_SHORT ).show()
         }
+
         if( ContextCompat.checkSelfPermission(
                         context!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             mGoogleMap.isMyLocationEnabled = true
-
+            siteProvider.getAllSites(marcadores,mGoogleMap)
             val lastLocation = fusedLocationProviderClient.lastLocation
             lastLocation.addOnSuccessListener { location ->
                 if(location != null){
                     currentLocation =location
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
-                    guate = mGoogleMap.addMarker(MarkerOptions()
-                            .position(LatLng(currentLocation.latitude, currentLocation.longitude))
-                            .title("Marker in Guatemala")
-                            .icon(BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
                 }
             }
+
         }
 
 
         mGoogleMap.setOnMarkerClickListener(this)
     }
 
-    override fun onMarkerClick(marker: Marker): Boolean {
-        if (marker == guate) {
-            mListener!!.markerClicked(marker)
+    private fun addAllMarkers(sitios: List<Sitio>) {
+
+        for (s in sitios){
+            val marker = mGoogleMap.addMarker(MarkerOptions()
+                    .position(LatLng(s.latitud!!,s.longitud!!))
+                    .title(s.nombre))
+
         }
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        mListener!!.markerClicked(marcadores[marker], marker.tag.toString())
         return false
     }
 
     interface MarkerClickedListener {
-        fun markerClicked(marker: Marker?)
+        fun markerClicked(sitio: Sitio?, key: String)
+    }
+
+    override fun onDiscovered(lista: List<Boolean>) {
+
     }
 }

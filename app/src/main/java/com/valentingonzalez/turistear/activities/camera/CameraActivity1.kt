@@ -14,6 +14,10 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.ktx.storageMetadata
 import com.valentingonzalez.turistear.R
 import kotlinx.android.synthetic.main.camera_layout1.*
 import java.io.File
@@ -27,11 +31,12 @@ class CameraActivity1 : AppCompatActivity() {
 
     private lateinit var outputDir: File
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var currLocation: String
 
     override fun onCreate( savedInstanceState : Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_layout1)
-
+        currLocation = intent.getStringExtra(getString(R.string.marker_location_key))!!
         if(allPermisionsGranted()){
             startCamera()
         } else {
@@ -60,11 +65,32 @@ class CameraActivity1 : AppCompatActivity() {
 
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                 val saverUri = Uri.fromFile(photoFile)
-                val msg = "Foto tomada exitosamente : $saverUri"
+                val msg = "Foto tomada exitosamente, guardando en linea..."
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                Log.d(TAG, msg)
+//                Log.d(TAG, msg)
+
+                uploadToFirebase(photoFile)
             }
         })
+    }
+
+    private fun uploadToFirebase(photoFile: File) {
+        val storageRef = Firebase.storage.reference
+
+        val file = Uri.fromFile(photoFile)
+        val metadata = storageMetadata {
+            contentType = "image/jpg"
+        }
+        val photoRef = storageRef.child(FirebaseAuth.getInstance().uid.toString())
+                .child(currLocation).child(file.lastPathSegment.toString())
+
+        val uploadTask = photoRef.putFile(file, metadata)
+
+        uploadTask.addOnFailureListener{
+            Toast.makeText(this, "Error uploading", Toast.LENGTH_SHORT).show()
+        }.addOnSuccessListener {
+            Toast.makeText(this, "Upload Successful", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun startCamera() {

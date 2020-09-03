@@ -1,6 +1,7 @@
 package com.valentingonzalez.turistear.models
 
 class Recurso{
+    constructor() {}
     constructor(tipo: String?, valor: String?) {
         this.tipo = tipo
         this.valor = valor

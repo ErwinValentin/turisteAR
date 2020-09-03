@@ -51,6 +51,7 @@
             android:parentActivityName=".activities.login.LoginActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activities.camera.CameraActivity1" />
+        <activity android:name=".activities.SecretDetailActivity" />
     </application>
 
 </manifest>

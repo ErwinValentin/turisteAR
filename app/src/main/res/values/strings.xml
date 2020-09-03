@@ -24,4 +24,10 @@
     <string name="menu_send">Send</string>
     <string name="open_drawer">Abrir Menú</string>
     <string name="close_drawer">Cerrar Menú</string>
+
+    <string name="marker_title">MarkerTitle</string>
+    <string name="marker_description">MarkerDescription</string>
+    <string name="marker_image">MarkerImage</string>
+    <string name="marker_location_key">MarkerLocationKey</string>
+    <string name="marker_secret_amount">MarkerSecretAmount</string>
 </resources>

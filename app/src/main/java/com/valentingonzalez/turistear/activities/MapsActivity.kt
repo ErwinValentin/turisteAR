@@ -43,6 +43,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         navView = findViewById(R.id.maps_navigation_view)
         navView.setNavigationItemSelectedListener(this)
         //testCreateSitio()
+
         val account_icon:ImageView = findViewById(R.id.toolbar_account_icon)
         account_icon.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -56,14 +57,14 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
 
     }
 
-    private fun testCreateSitio() {
-        val recList = listOf<Recurso>(Recurso("image", "SDFGHJKL.jpg"),Recurso("image", "SDFGHJKL.jpg"))
-        val site = Sitio("prueba formato", 14.685027f,-90.550995f, "prueba movil", recList, "Museo")
-
-        val secList = listOf(Secreto("el secreto1", 14.685027f,-90.550995f,"NombreSecreto1",recList),Secreto("el secreto2", 14.685027f,-90.550995f,"NombreSecreto2",recList),Secreto("el secreto3", 14.685027f,-90.550995f,"NombreSecreto3",recList))
-        val siteProvider = SiteProvider()
-        siteProvider.createSite(site,secList)
-    }
+//    private fun testCreateSitio() {
+//        val recList = listOf<Recurso>(Recurso("image", "SDFGHJKL.jpg"),Recurso("image", "SDFGHJKL.jpg"))
+//        val site = Sitio("prueba formato", 14.685027,-90.550995, "prueba movil", recList, "Museo")
+//
+//        val secList = listOf(Secreto("el secreto1", 14.685027,-90.550995,"NombreSecreto1",recList),Secreto("el secreto2", 14.685027,-90.550995,"NombreSecreto2",recList),Secreto("el secreto3", 14.685027,-90.550995,"NombreSecreto3",recList))
+//        val siteProvider = SiteProvider(this)
+//        siteProvider.createSite(site,secList)
+//    }
 
     private fun allPermisionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
@@ -99,13 +100,16 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         FirebaseAuth.getInstance().signOut()
     }
 
-    override fun markerClicked(marker: Marker?) {
-        Toast.makeText(this@MapsActivity, marker!!.title, Toast.LENGTH_SHORT).show()
+    override fun markerClicked(sitio: Sitio?, key: String) {
+        //Toast.makeText(this@MapsActivity, marker!!.title, Toast.LENGTH_SHORT).show()
         val bundle = Bundle()
-        bundle.putString("TITLE", marker.title)
+        bundle.putString(getString(R.string.marker_title), sitio!!.nombre)
+        bundle.putString(getString(R.string.marker_description), sitio.descripcion)
+        bundle.putString(getString(R.string.marker_location_key), key)
+        //bundle.putString(getString(R.string.marker_description), sitio.descripcion)
         val info = LocationInfoModalSheet()
         info.arguments = bundle
-        info.show(supportFragmentManager, "Hello")
+        info.show(supportFragmentManager, "Location Clicked")
     }
 
     companion object {

@@ -1,7 +1,8 @@
 package com.valentingonzalez.turistear.models
 
 class Secreto{
-    constructor(descripcion: String?, latitud: Float?, longitud: Float?, nombre: String?, recursos: List<Recurso>?) {
+    constructor() {}
+    constructor(descripcion: String?, latitud: Double?, longitud: Double?, nombre: String?, recursos: List<Recurso>?) {
         this.descripcion = descripcion
         this.latitud = latitud
         this.longitud = longitud
@@ -10,8 +11,11 @@ class Secreto{
     }
 
     var descripcion: String? = null
-    var latitud: Float? = null
-    var longitud: Float? = null
+    var latitud: Double? = null
+    var longitud: Double? = null
     var nombre: String? = null
     var recursos: List<Recurso>? = null
+    override fun toString(): String {
+        return "Secreto(descripcion=$descripcion, latitud=$latitud, longitud=$longitud, nombre=$nombre, recursos=$recursos)"
+    }
 }

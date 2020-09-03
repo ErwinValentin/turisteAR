@@ -72,23 +72,27 @@
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_share_black_24dp" />
+            android:src="@drawable/ic_share_black_24dp"
+            android:id="@+id/modal_share_button"/>
 
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_camera_alt_black_24dp" />
+            android:src="@drawable/ic_camera_alt_black_24dp"
+            android:id="@+id/modal_camera_button"/>
 
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/reviews_discussion"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:id="@+id/modal_reviews_button"/>
 
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_favorite_border_black_24dp" />
+            android:src="@drawable/ic_favorite_border_black_24dp"
+            android:id="@+id/modal_favorite_button"/>
     </LinearLayout>
 
     <ImageView
