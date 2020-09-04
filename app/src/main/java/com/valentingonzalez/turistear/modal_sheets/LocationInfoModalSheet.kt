@@ -11,15 +11,23 @@ import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.SecretDetailActivity
 import com.valentingonzalez.turistear.activities.camera.CameraActivity1
+import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
+import com.valentingonzalez.turistear.providers.UserProvider
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
 
-class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.DiscoveredSites {
+class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.DiscoveredSites , UserProvider.FavoriteCheck{
 
     private lateinit var locationID: String
     private var siteProvider: SiteProvider = SiteProvider(this)
+    private var userProvider: UserProvider = UserProvider(this)
     private var mFirebaseAuth: AuthProvider = AuthProvider()
+
+    private lateinit var favoriteLocation: ImageButton
+    private lateinit var currLocation: String
+    private lateinit var nombre: String
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //TODO get secret amount from user, show on layout
         val layout = inflater.inflate(R.layout.modal_sheet_v2, container, false)
@@ -30,7 +38,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         //val secretsAmount = layout.findViewById<TextView>(R.id.secrets_amount)
         //locationID = b?.getString("location").toString()
         //val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
-        val currLocation: String = b?.getString(getString(R.string.marker_location_key))!!
+        currLocation = b?.getString(getString(R.string.marker_location_key))!!
         if(mFirebaseAuth.currentUser()!=null){
             siteProvider.getSiteDiscoveredSecrets(FirebaseAuth.getInstance().currentUser!!.uid, currLocation)
         }
@@ -40,13 +48,20 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
             startActivity(intent)
         }
 
-        titleView.setText(b.getString(getString(R.string.marker_title)))
-        descView.setText(b.getString(getString(R.string.marker_description)))
+        nombre = b.getString(getString(R.string.marker_title))!!
+        titleView.text = nombre
+        descView.text = b.getString(getString(R.string.marker_description))
         val openCamera: ImageButton = layout.findViewById(R.id.modal_camera_button)
         openCamera.setOnClickListener{
             val intent = Intent(context, CameraActivity1::class.java)
             intent.putExtra(getString(R.string.marker_location_key), currLocation)
             startActivity(intent)
+        }
+        favoriteLocation = layout.findViewById(R.id.modal_favorite_button)
+        favoriteLocation.tag = 0
+        userProvider.isFavorite(currLocation, listOf(-1))
+        favoriteLocation.setOnClickListener{
+            changeFavIcon(true)
         }
         /*val userProvider = UserProvider()
         userProvider.getUser(nv)*/
@@ -83,8 +98,28 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         return layout
     }
 
+    private fun changeFavIcon(agregar : Boolean) {
+        if(favoriteLocation.tag == 0) {
+            favoriteLocation.setImageResource(R.drawable.ic_favorite_black_24dp)
+            favoriteLocation.tag = 1
+            if(agregar) {
+                val fav = FavoritoUsuario(currLocation, nombre, -1)
+                userProvider.addFavorite(fav)
+            }
+        }else{
+            favoriteLocation.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+            favoriteLocation.tag = 0
+        }
+    }
+
     override fun onDiscovered(lista: List<Boolean>) {
         val count = lista.count{ it }
         secrets_amount.text = "$count/3"
+    }
+
+    override fun onFavoriteChecked(isFav: List<Boolean>) {
+        if(isFav.isNotEmpty() && isFav[0]){
+            changeFavIcon(false)
+        }
     }
 }

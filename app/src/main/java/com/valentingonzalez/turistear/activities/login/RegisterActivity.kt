@@ -21,7 +21,7 @@ import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.UserProvider
 import dmax.dialog.SpotsDialog
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() , UserProvider.FavoriteCheck{
     var mAuthProvider: AuthProvider? = null
     var mUserProvider: UserProvider? = null
     var mCreateButton: MaterialButton? = null
@@ -38,7 +38,7 @@ class RegisterActivity : AppCompatActivity() {
         mCreateButton = findViewById(R.id.register_button)
         show(this@RegisterActivity, "Registrarse", true)
         mAuthProvider = AuthProvider()
-        mUserProvider = UserProvider()
+        mUserProvider = UserProvider(this)
         nameTIET = findViewById(R.id.nameTiet)
         emailTIET = findViewById(R.id.emailTiet)
         passwordTIET = findViewById(R.id.passTiet)
@@ -126,5 +126,9 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this@RegisterActivity, "Error con creacion de usuario", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onFavoriteChecked(isFav: List<Boolean>) {
+        TODO("Not yet implemented")
     }
 }
