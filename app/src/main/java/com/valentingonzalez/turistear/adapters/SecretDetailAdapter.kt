@@ -49,19 +49,21 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
         }else{
             holder.secretObtainedIcon.setImageResource(R.drawable.closed_chest_m)
             holder.secretMainImage.visibility = View.GONE
-            holder.secretDescription.text = "Pista"
+            holder.secretDescription.visibility = View.GONE
+            holder.secretFavorite.visibility = View.INVISIBLE
             holder.secretTitle.text = "Secreto aún no descubierto"
         }
         if(isFav) {
-            holder.secretFavorite.setImageResource(R.drawable.ic_favorite_black_24dp)
+            holder.secretFavorite.setImageResource(R.drawable.ic_favorite_red_400_24dp)
             holder.secretFavorite.tag = 1
         }else{
             holder.secretFavorite.setImageResource(R.drawable.ic_favorite_border_black_24dp)
             holder.secretFavorite.tag = 0
         }
         holder.secretFavorite.setOnClickListener{
+            //TODO if not discovered cannot fav
             if(it.tag==0){
-                holder.secretFavorite.setImageResource(R.drawable.ic_favorite_black_24dp)
+                holder.secretFavorite.setImageResource(R.drawable.ic_favorite_red_400_24dp)
                 it.tag = 1
                 val fav = FavoritoUsuario(currLocation, currentItem.nombre, position)
                 userProvider.addFavorite(fav)

@@ -68,8 +68,6 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
             }
 
         }
-
-
         mGoogleMap.setOnMarkerClickListener(this)
     }
 

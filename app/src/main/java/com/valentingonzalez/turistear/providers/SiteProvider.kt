@@ -42,11 +42,10 @@ class SiteProvider( private val listener : DiscoveredSites){
         })
     }
     fun getSiteDiscoveredSecrets(uId: String, siteId: String){
-        val obtained = mutableListOf<Boolean>()
         mUserSecretReference.child(uId).child(siteId).addValueEventListener(object: ValueEventListener{
             override fun onCancelled(error: DatabaseError) { }
             override fun onDataChange(snapshot: DataSnapshot) {
-
+                val obtained = mutableListOf<Boolean>()
                 for(user_count in snapshot.children){
                     Log.d("USER_SECRET", user_count.value.toString())
                     if(user_count.value == true) {

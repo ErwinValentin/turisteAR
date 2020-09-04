@@ -13,6 +13,8 @@ import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SecretProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
+import com.valentingonzalez.turistear.includes.BasicToolbar.show
+
 
 class SecretDetailActivity : AppCompatActivity(), SiteProvider.DiscoveredSites, SecretProvider.SiteSecrets, UserProvider.FavoriteCheck{
 
@@ -27,8 +29,9 @@ class SecretDetailActivity : AppCompatActivity(), SiteProvider.DiscoveredSites, 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.secret_location_layout)
-        secretsRecyclerView = findViewById(R.id.secret_details_rv)
+        setContentView(R.layout.item_list_layout)
+        secretsRecyclerView = findViewById(R.id.recycler_view_item)
+        show(this, "Secretos del Lugar", true)
         Log.d("Extras", intent.extras?.getString(getString(R.string.marker_location_key))!!)
         currLocation = intent.extras?.getString(getString(R.string.marker_location_key))!!
         if(mFirebaseAuth.currentUser()!=null){

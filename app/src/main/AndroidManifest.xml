@@ -35,7 +35,8 @@
 
         <activity
             android:name=".activities.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps">
+        </activity>
         <activity
             android:name=".activities.login.LoginActivity"
             android:windowSoftInputMode="stateHidden">
@@ -51,7 +52,10 @@
             android:parentActivityName=".activities.login.LoginActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activities.camera.CameraActivity1" />
-        <activity android:name=".activities.SecretDetailActivity" />
+        <activity android:name=".activities.SecretDetailActivity"
+            android:parentActivityName=".activities.MapsActivity"/>
+        <activity android:name=".activities.CommentActivity"
+            android:parentActivityName=".activities.MapsActivity"/>
     </application>
 
 </manifest>

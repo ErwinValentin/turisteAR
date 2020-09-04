@@ -9,6 +9,7 @@ import android.widget.*
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
+import com.valentingonzalez.turistear.activities.CommentActivity
 import com.valentingonzalez.turistear.activities.SecretDetailActivity
 import com.valentingonzalez.turistear.activities.camera.CameraActivity1
 import com.valentingonzalez.turistear.models.FavoritoUsuario
@@ -25,6 +26,8 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
     private var mFirebaseAuth: AuthProvider = AuthProvider()
 
     private lateinit var favoriteLocation: ImageButton
+    private lateinit var ratingsButton : ImageButton
+
     private lateinit var currLocation: String
     private lateinit var nombre: String
 
@@ -63,6 +66,13 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         favoriteLocation.setOnClickListener{
             changeFavIcon(true)
         }
+
+        ratingsButton = layout.findViewById(R.id.modal_reviews_button)
+        ratingsButton.setOnClickListener{
+            val intent = Intent(context, CommentActivity::class.java)
+            intent.putExtra(getString(R.string.marker_location_key), currLocation)
+            startActivity(intent)
+        }
         /*val userProvider = UserProvider()
         userProvider.getUser(nv)*/
 
@@ -100,7 +110,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
 
     private fun changeFavIcon(agregar : Boolean) {
         if(favoriteLocation.tag == 0) {
-            favoriteLocation.setImageResource(R.drawable.ic_favorite_black_24dp)
+            favoriteLocation.setImageResource(R.drawable.ic_favorite_red_400_24dp)
             favoriteLocation.tag = 1
             if(agregar) {
                 val fav = FavoritoUsuario(currLocation, nombre, -1)
