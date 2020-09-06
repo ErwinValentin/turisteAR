@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -44,13 +45,16 @@ class CameraActivity1 : AppCompatActivity() {
         }
 
         camera_capture_button.setOnClickListener{ takePhoto() }
-        outputDir = getOutputDirectory()
+        outputDir = File(applicationContext.getExternalFilesDir(null).toString()+"/TouristeAR/"+currLocation)
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     private fun takePhoto() {
        val imageCapture = imageCapture?:return
-
+        if(!outputDir.exists()){
+            outputDir.mkdirs()
+        }
+        Log.d("DIR", outputDir.exists().toString())
         val photoFile = File(
                 outputDir,
                 SimpleDateFormat(FILENAME_FORMAT, Locale.US)
@@ -154,6 +158,6 @@ class CameraActivity1 : AppCompatActivity() {
         private const val TAG = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 }

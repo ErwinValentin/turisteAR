@@ -14,6 +14,7 @@ import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Secreto
 import com.valentingonzalez.turistear.providers.UserProvider
 import kotlinx.android.synthetic.main.secret_detail_item.view.*
+import java.util.*
 
 class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtained: List<Boolean>, private val favorites: List<Boolean>, private val currLocation: String, private val userProvider: UserProvider) : Adapter<SecretDetailAdapter.ViewHolder>(){
 
@@ -65,8 +66,9 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
             if(it.tag==0){
                 holder.secretFavorite.setImageResource(R.drawable.ic_favorite_red_400_24dp)
                 it.tag = 1
-                val fav = FavoritoUsuario(currLocation, currentItem.nombre, position)
+                val fav = FavoritoUsuario(currLocation, currentItem.nombre, position, Calendar.getInstance().time.toString())
                 userProvider.addFavorite(fav)
+
             }else{
                 holder.secretFavorite.setImageResource(R.drawable.ic_favorite_border_black_24dp)
                 it.tag = 0

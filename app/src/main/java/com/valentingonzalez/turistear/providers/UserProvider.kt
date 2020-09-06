@@ -35,7 +35,24 @@ class UserProvider(private var listener : FavoriteCheck) {
         //val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
         mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos").push().setValue(favorito)
     }
+    fun removeFav(location: String, numeroSecreto: Int){
+        mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos")
+                .orderByChild("llave").equalTo(location).addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
 
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for(fav in snapshot.children){
+                            val f = fav.getValue(FavoritoUsuario::class.java)
+                            val num = f?.numSecreto!!
+                            if(numeroSecreto  == num) {
+                                mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos").child(fav.key!!).removeValue()
+                            }
+                        }
+                    }
+                })
+    }
     fun isFavorite(key: String, numeroSecreto: List<Int>){
         Log.d("TEST",FirebaseAuth.getInstance().uid.toString())
         mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos")

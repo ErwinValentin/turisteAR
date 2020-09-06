@@ -2,6 +2,7 @@ package com.valentingonzalez.turistear.modal_sheets
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
+import java.util.*
 
 class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.DiscoveredSites , UserProvider.FavoriteCheck{
 
@@ -30,6 +32,8 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
 
     private lateinit var currLocation: String
     private lateinit var nombre: String
+
+    private lateinit var favoriteInfo: FavoritoUsuario
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //TODO get secret amount from user, show on layout
@@ -64,7 +68,14 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         favoriteLocation.tag = 0
         userProvider.isFavorite(currLocation, listOf(-1))
         favoriteLocation.setOnClickListener{
-            changeFavIcon(true)
+            if(favoriteLocation.tag == 0){
+                changeFavIcon(true)
+                userProvider.addFavorite(FavoritoUsuario(currLocation,nombre,-1, Calendar.getInstance().time.toString()))
+            }else{
+                changeFavIcon(false)
+                userProvider.removeFav(currLocation,-1)
+
+            }
         }
 
         ratingsButton = layout.findViewById(R.id.modal_reviews_button)
@@ -108,15 +119,12 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         return layout
     }
 
-    private fun changeFavIcon(agregar : Boolean) {
-        if(favoriteLocation.tag == 0) {
+    private fun changeFavIcon(isFav : Boolean) {
+        if(favoriteLocation.tag == 0 && isFav) {
             favoriteLocation.setImageResource(R.drawable.ic_favorite_red_400_24dp)
             favoriteLocation.tag = 1
-            if(agregar) {
-                val fav = FavoritoUsuario(currLocation, nombre, -1)
-                userProvider.addFavorite(fav)
-            }
-        }else{
+        }
+        if(favoriteLocation.tag == 1 && !isFav) {
             favoriteLocation.setImageResource(R.drawable.ic_favorite_border_black_24dp)
             favoriteLocation.tag = 0
         }
@@ -129,7 +137,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
 
     override fun onFavoriteChecked(isFav: List<Boolean>) {
         if(isFav.isNotEmpty() && isFav[0]){
-            changeFavIcon(false)
+            changeFavIcon(isFav[0])
         }
     }
 }
