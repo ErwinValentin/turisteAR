@@ -72,6 +72,7 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
             }else{
                 holder.secretFavorite.setImageResource(R.drawable.ic_favorite_border_black_24dp)
                 it.tag = 0
+                userProvider.removeFav(currLocation, position)
             }
         }
     }
