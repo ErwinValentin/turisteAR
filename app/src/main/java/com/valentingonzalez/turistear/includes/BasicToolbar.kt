@@ -7,7 +7,7 @@ import com.valentingonzalez.turistear.R
 object BasicToolbar {
     @JvmStatic
     fun show(activity: AppCompatActivity, title: String?, upEnabled: Boolean) {
-        val mToolbar = activity.findViewById<Toolbar>(R.id.register_toolbar)
+        val mToolbar = activity.findViewById<Toolbar>(R.id.basic_toolbar)
         activity.setSupportActionBar(mToolbar)
         activity.supportActionBar!!.title = title
         assert(activity.supportActionBar != null)

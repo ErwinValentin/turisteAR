@@ -7,6 +7,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.adapters.CommentAdapter
 import com.valentingonzalez.turistear.fragments.AddReviewDialogFragment
@@ -29,9 +30,9 @@ class CommentActivity : AppCompatActivity(), RatingProvider.SiteRatings, AddRevi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.item_list_layout)
         ratingRecyclerView = findViewById(R.id.recycler_view_item)
-        BasicToolbar.show(this, "Reseñas del Lugar", true)
         locationKey = intent.getStringExtra(getString(R.string.marker_location_key))!!
         locationName = intent.getStringExtra(getString(R.string.marker_title))!!
+        BasicToolbar.show(this, locationName, true)
         ratingsProvider.getRatings(locationKey)
     }
 
@@ -65,7 +66,7 @@ class CommentActivity : AppCompatActivity(), RatingProvider.SiteRatings, AddRevi
     }
 
     override fun onDialogPositiveClick(title: String, comment: String, stars: Float) {
-        newRating = Comentario(comment, stars, Calendar.getInstance().time.toString(), locationName, "", title)
+        newRating = Comentario(comment, stars, Calendar.getInstance().time.toString(), FirebaseAuth.getInstance().currentUser!!.uid, "", title)
         mUserProvider.getUser()
     }
 

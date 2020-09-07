@@ -81,7 +81,6 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
         }
     }
-
     override fun onMarkerClick(marker: Marker): Boolean {
         mListener!!.markerClicked(marcadores[marker], marker.tag.toString())
         return false

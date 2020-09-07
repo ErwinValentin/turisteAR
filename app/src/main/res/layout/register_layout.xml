@@ -14,7 +14,7 @@
         tools:context=".activities.login.RegisterActivity">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/register_toolbar"
+            android:id="@+id/basic_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDark"

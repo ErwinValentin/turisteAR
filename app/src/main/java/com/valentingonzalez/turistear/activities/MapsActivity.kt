@@ -106,6 +106,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         bundle.putString(getString(R.string.marker_title), sitio!!.nombre)
         bundle.putString(getString(R.string.marker_description), sitio.descripcion)
         bundle.putString(getString(R.string.marker_location_key), key)
+        bundle.putString(getString(R.string.marker_image), sitio.recursos?.get(0)?.valor)
         //bundle.putString(getString(R.string.marker_description), sitio.descripcion)
         val info = LocationInfoModalSheet()
         info.arguments = bundle

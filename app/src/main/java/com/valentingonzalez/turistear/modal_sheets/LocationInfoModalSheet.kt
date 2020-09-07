@@ -1,38 +1,46 @@
 package com.valentingonzalez.turistear.modal_sheets
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.squareup.picasso.Picasso
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.CommentActivity
 import com.valentingonzalez.turistear.activities.SecretDetailActivity
+import com.valentingonzalez.turistear.activities.ShareGalleryActivity
 import com.valentingonzalez.turistear.activities.camera.CameraActivity1
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
+import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
 import java.util.*
 
 class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.DiscoveredSites , UserProvider.UserProviderListener{
-    //TODO mostrar imagenes de la base de datos
-    private lateinit var locationID: String
     private var siteProvider: SiteProvider = SiteProvider(this)
     private var userProvider: UserProvider = UserProvider(this)
     private var mFirebaseAuth: AuthProvider = AuthProvider()
+    private var mStorage : StorageReference = FirebaseStorage.getInstance().reference
 
+
+    private lateinit var shareButton: ImageButton
     private lateinit var favoriteLocation: ImageButton
     private lateinit var ratingsButton : ImageButton
 
     private lateinit var currLocation: String
     private lateinit var nombre: String
+    private lateinit var imageSrc: String
 
-    private lateinit var favoriteInfo: FavoritoUsuario
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //TODO get secret amount from user, show on layout
@@ -43,8 +51,17 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         val showSecrets = layout.findViewById<ImageView>(R.id.show_secrets)
         //val secretsAmount = layout.findViewById<TextView>(R.id.secrets_amount)
         //locationID = b?.getString("location").toString()
-        //val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
+        val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
         currLocation = b?.getString(getString(R.string.marker_location_key))!!
+        imageSrc = b.getString(getString(R.string.marker_image))!!
+        val dlPath = mStorage.child(currLocation+"/"+imageSrc)
+        Log.d("IMAGE", dlPath.toString())
+        dlPath.downloadUrl.addOnSuccessListener {
+            Picasso.get()
+                    .load(it)
+                    .placeholder(R.drawable.landscape_sample)
+                    .into(main_image)
+        }
         if(mFirebaseAuth.currentUser()!=null){
             siteProvider.getSiteDiscoveredSecrets(FirebaseAuth.getInstance().currentUser!!.uid, currLocation)
         }
@@ -80,6 +97,14 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         ratingsButton = layout.findViewById(R.id.modal_reviews_button)
         ratingsButton.setOnClickListener{
             val intent = Intent(context, CommentActivity::class.java)
+            intent.putExtra(getString(R.string.marker_location_key), currLocation)
+            intent.putExtra(getString(R.string.marker_title), nombre)
+            startActivity(intent)
+        }
+        shareButton = layout.findViewById(R.id.modal_share_button)
+        shareButton.setOnClickListener{
+            val intent = Intent(context, ShareGalleryActivity::class.java)
+            intent.putExtra(getString(R.string.user_id), FirebaseAuth.getInstance().currentUser!!.uid)
             intent.putExtra(getString(R.string.marker_location_key), currLocation)
             intent.putExtra(getString(R.string.marker_title), nombre)
             startActivity(intent)

@@ -29,6 +29,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'com.google.android.material:material:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0-rc01'
+
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation "androidx.constraintlayout:constraintlayout:2.0.0-rc1"
@@ -45,6 +47,8 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
 // CameraX View class
     implementation "androidx.camera:camera-view:1.0.0-alpha14"
+    
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
