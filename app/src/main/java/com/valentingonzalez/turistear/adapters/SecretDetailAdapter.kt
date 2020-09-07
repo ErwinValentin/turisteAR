@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.GONE
+import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Secreto
@@ -36,12 +38,16 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
         return secrets.size
     }
 
-    override fun onBindViewHolder(holder: SecretDetailAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentItem = secrets[position]
         val currentObtained = obtained[position]
         val isFav = favorites[position]
 
         //TODO grab images from Firebase and place them
+        val fbStorage = FirebaseStorage.getInstance().reference
+        val path = fbStorage.child("$currLocation/secrets/${currentItem.recursos!![0].valor}").downloadUrl.addOnSuccessListener {
+            Picasso.get().load(it).placeholder(R.drawable.landscape_sample).into(holder.secretMainImage)
+        }
         holder.secretTitle.isSelected = true
         if(currentObtained) {
             holder.secretObtainedIcon.setImageResource(R.drawable.open_chest_v2_m)

@@ -29,7 +29,7 @@ class ShareGalleryActivity: AppCompatActivity(), ImageSourcesProvider.ImageListe
     private lateinit var imageFiles: Array<File>
     // Array of filenames corresponding to imageFiles
     private lateinit var imageFilenames: Array<String>
-
+    private lateinit var siteName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +49,7 @@ class ShareGalleryActivity: AppCompatActivity(), ImageSourcesProvider.ImageListe
         val bundle = intent.extras
         val uid = bundle!!.getString(getString(R.string.user_id))!!
         val siteId = bundle.getString(getString(R.string.marker_location_key))!!
-        val siteName = bundle.getString(getString(R.string.marker_title))!!
+        siteName = bundle.getString(getString(R.string.marker_title))!!
         gridView = findViewById(R.id.grid_view)
 
         imageProvider.getPersonalImages(true, uid, siteId)
@@ -58,7 +58,7 @@ class ShareGalleryActivity: AppCompatActivity(), ImageSourcesProvider.ImageListe
 
     override fun onImageObtained(images : List<StorageReference>, imagesSource: List<String>) {
         imagesSrc.addAll(imagesSource)
-        val adapter = GridAdapterv2(imagesURLs, this)
+        val adapter = GridAdapterv2(imagesURLs, this, siteName)
         gridView.adapter = adapter
         for(it in images) {
             it.downloadUrl.addOnSuccessListener {

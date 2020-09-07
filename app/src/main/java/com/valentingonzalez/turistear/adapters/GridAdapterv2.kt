@@ -31,7 +31,7 @@ import java.io.FileOutputStream
 import java.lang.IllegalArgumentException
 import kotlin.Exception
 
-class GridAdapterv2(private val images : MutableList<Uri>,val  context: Context) : Adapter<GridAdapterv2.ViewHolder>(){
+class GridAdapterv2(private val images : MutableList<Uri>,val  context: Context,val siteName: String) : Adapter<GridAdapterv2.ViewHolder>(){
 
     private var multiSelect = false
     private var selectedItem : Uri? = null
@@ -64,6 +64,8 @@ class GridAdapterv2(private val images : MutableList<Uri>,val  context: Context)
 
                     val intent = Intent()
                     intent.action = Intent.ACTION_SEND
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "He visitado $siteName")
+                    intent.type = "text/plain"
                     intent.putExtra(Intent.EXTRA_TEXT, "Mira el lugar que he visitado")
                     intent.type = "text/plain"
                     val fileUri: Uri?= try{
