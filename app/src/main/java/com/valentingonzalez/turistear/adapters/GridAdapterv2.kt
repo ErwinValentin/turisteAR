@@ -11,6 +11,7 @@ import android.net.Uri
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
+import android.widget.Toast
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
@@ -31,13 +32,12 @@ import java.io.FileOutputStream
 import java.lang.IllegalArgumentException
 import kotlin.Exception
 
-class GridAdapterv2(private val images : MutableList<Uri>,val  context: Context,val siteName: String) : Adapter<GridAdapterv2.ViewHolder>(){
+class GridAdapterv2(private val images : MutableList<Uri>, private val imageSource: MutableList<String> ,val  context: Context,val siteName: String) : Adapter<GridAdapterv2.ViewHolder>(){
 
     private var multiSelect = false
     private var selectedItem : Uri? = null
     private var selectedCard : CardView? = null
-    private var selectedImages = mutableMapOf<Int,File>()
-    private var items = arrayListOf<File>()
+    //private var items = arrayListOf<File>()
     private var progessDialog: AlertDialog? = null
 
     private var actionMode: ActionMode? = null
@@ -86,6 +86,15 @@ class GridAdapterv2(private val images : MutableList<Uri>,val  context: Context,
                 }
                 R.id.menu_delete->{
                     //delete selected items from firebase
+                    val fbStorage = FirebaseStorage.getInstance().getReferenceFromUrl(selectedItem.toString())
+                    Log.d("TESTDELETE",fbStorage.path)
+                    fbStorage.delete().addOnSuccessListener {
+                        Toast.makeText(context,"Deleted!",Toast.LENGTH_SHORT).show()
+                    }
+                    val selected = images.indexOf(selectedItem)
+                    images.removeAt(selected)
+                    imageSource.removeAt(selected)
+                    notifyDataSetChanged()
                 }
             }
             return true
@@ -137,6 +146,8 @@ class GridAdapterv2(private val images : MutableList<Uri>,val  context: Context,
                 actionMode = (it.context as AppCompatActivity).startSupportActionMode(mActionMode())
             }
             selectItem(currentItem, holder.card, position)
+            val menu = actionMode?.menu!!
+            menu.findItem(R.id.menu_delete).isVisible = imageSource[position] == "Personal"
         }
         Picasso.get()
                 .load(currentItem)

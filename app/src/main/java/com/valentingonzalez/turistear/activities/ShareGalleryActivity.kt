@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.StorageReference
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.adapters.GridAdapterv2
@@ -56,13 +58,23 @@ class ShareGalleryActivity: AppCompatActivity(), ImageSourcesProvider.ImageListe
         show(this@ShareGalleryActivity,"Imagenes de $siteName}",true)
     }
 
-    override fun onImageObtained(images : List<StorageReference>, imagesSource: List<String>) {
-        imagesSrc.addAll(imagesSource)
-        val adapter = GridAdapterv2(imagesURLs, this, siteName)
+    override fun onImageObtained(images : List<StorageReference>) {
+
+        val adapter = GridAdapterv2(imagesURLs, imagesSrc, this, siteName)
+
         gridView.adapter = adapter
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
         for(it in images) {
             it.downloadUrl.addOnSuccessListener {
                 result ->
+                val path = result.path!!
+                if(path.contains(userId)){
+                    imagesSrc.add("Personal")
+                }else if(path.contains("secrets")){
+                    imagesSrc.add("Secret")
+                }else{
+                    imagesSrc.add("Site")
+                }
                 adapter.addItem(result)
                 adapter.notifyDataSetChanged()
             }

@@ -32,4 +32,5 @@
     <string name="marker_secret_amount">MarkerSecretAmount</string>
     <string name="user_id">User ID</string>
     <string name="review_dialog_prompt">¿Qué opinas sobre este sitio?</string>
+    <string name="image_src_personal">Personal</string>
 </resources>
