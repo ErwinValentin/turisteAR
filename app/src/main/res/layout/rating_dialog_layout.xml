@@ -1,33 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
+    android:gravity="center"
     android:padding="5dp">
-
     <TextView
         android:id="@+id/site_comment_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Comentar_sobre_sitio"
+        android:text="@string/review_dialog_prompt"
         style="@style/title"
         />
-
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/review_comment_til">
+        android:layout_height="wrap_content"
+        app:boxBackgroundColor="@android:color/transparent"
+        android:background="@android:color/transparent"
+        android:id="@+id/review_title_til"
+        app:counterEnabled="true"
+        app:counterMaxLength="60">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Reseña"
-            android:id="@+id/review_comment_tiet"/>
+            android:hint="Agrega un título"
+            android:id="@+id/review_title_tiet" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxBackgroundColor="@android:color/transparent"
+        android:background="@android:color/transparent"
+        android:id="@+id/review_comment_til"
+        app:counterEnabled="true"
+        app:counterMaxLength="300">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Agrega un comentario"
+            android:id="@+id/review_comment_tiet" />
+    </com.google.android.material.textfield.TextInputLayout>
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:numStars="5"
+            android:rating="4"
+            android:stepSize="0.5">
+        </RatingBar>
 </LinearLayout>

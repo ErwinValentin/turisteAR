@@ -16,7 +16,7 @@ import com.valentingonzalez.turistear.providers.UserProvider
 import com.valentingonzalez.turistear.includes.BasicToolbar.show
 
 
-class SecretDetailActivity : AppCompatActivity(), SiteProvider.DiscoveredSites, SecretProvider.SiteSecrets, UserProvider.FavoriteCheck{
+class SecretDetailActivity : AppCompatActivity(), SiteProvider.DiscoveredSites, SecretProvider.SiteSecrets, UserProvider.UserProviderListener{
 
     private val secretProvider: SecretProvider = SecretProvider(this)
     private var siteProvider: SiteProvider = SiteProvider(this)
@@ -56,6 +56,9 @@ class SecretDetailActivity : AppCompatActivity(), SiteProvider.DiscoveredSites, 
         secretsRecyclerView.adapter = adapter
         secretsRecyclerView.layoutManager = LinearLayoutManager(this)
         secretsRecyclerView.setHasFixedSize(true)
+    }
+
+    override fun getUserName(name: String) {
     }
 
 }

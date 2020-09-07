@@ -15,7 +15,7 @@ class Usuario {
     override fun toString(): String {
         return "Usuario{" +
                 "id='" + id + '\'' +
-                ", name='" + nombre + '\'' +
+                ", nombre='" + nombre + '\'' +
                 ", email='" + email + '\'' +
                 '}'
     }

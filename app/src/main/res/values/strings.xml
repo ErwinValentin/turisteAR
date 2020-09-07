@@ -30,4 +30,5 @@
     <string name="marker_image">MarkerImage</string>
     <string name="marker_location_key">MarkerLocationKey</string>
     <string name="marker_secret_amount">MarkerSecretAmount</string>
+    <string name="review_dialog_prompt">¿Qué opinas sobre este sitio?</string>
 </resources>

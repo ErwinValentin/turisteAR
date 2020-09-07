@@ -1,8 +1,6 @@
 package com.valentingonzalez.turistear.providers
 
-import android.renderscript.Sampler
 import android.util.Log
-import android.widget.TextView
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -10,7 +8,7 @@ import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Usuario
 import java.util.*
 
-class UserProvider(private var listener : FavoriteCheck) {
+class UserProvider(private var listener : UserProviderListener) {
     var mUserReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Usuarios")
     fun createUser(usuario: Usuario): Task<Void> {
         val map: MutableMap<String, Any?> = HashMap()
@@ -19,13 +17,13 @@ class UserProvider(private var listener : FavoriteCheck) {
         return mUserReference.child(usuario.id!!).setValue(map)
     }
 
-    fun getUser(nameView: TextView) {
+    fun getUser() {
         val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
-        Log.d("PROVIDER", currentUser)
-        mUserReference.child(currentUser).addValueEventListener(object : ValueEventListener {
+        mUserReference.child(currentUser).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val u = snapshot.getValue(Usuario::class.java)!!
-                nameView.text = u.nombre
+                Log.d("Usuario", u.toString())
+                listener.getUserName(u.nombre!!)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -86,7 +84,8 @@ class UserProvider(private var listener : FavoriteCheck) {
                 })
     }
 
-    interface FavoriteCheck{
+    interface UserProviderListener {
         fun onFavoriteChecked(isFav : List<Boolean>)
+        fun getUserName(name: String)
     }
 }

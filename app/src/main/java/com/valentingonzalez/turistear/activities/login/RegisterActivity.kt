@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
@@ -14,16 +13,15 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.MapsActivity
-import com.valentingonzalez.turistear.activities.login.RegisterActivity
 import com.valentingonzalez.turistear.includes.BasicToolbar.show
 import com.valentingonzalez.turistear.models.Usuario
 import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.UserProvider
 import dmax.dialog.SpotsDialog
 
-class RegisterActivity : AppCompatActivity() , UserProvider.FavoriteCheck{
-    var mAuthProvider: AuthProvider? = null
-    var mUserProvider: UserProvider? = null
+class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener{
+    var mAuthProvider: AuthProvider? = AuthProvider()
+    var mUserProvider: UserProvider = UserProvider(this)
     var mCreateButton: MaterialButton? = null
     var nameTIET: TextInputEditText? = null
     var emailTIET: TextInputEditText? = null
@@ -32,13 +30,12 @@ class RegisterActivity : AppCompatActivity() , UserProvider.FavoriteCheck{
     var emailTil: TextInputLayout? = null
     var passTil: TextInputLayout? = null
     var progessDialog: AlertDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.register_layout)
         mCreateButton = findViewById(R.id.register_button)
         show(this@RegisterActivity, "Registrarse", true)
-        mAuthProvider = AuthProvider()
-        mUserProvider = UserProvider(this)
         nameTIET = findViewById(R.id.nameTiet)
         emailTIET = findViewById(R.id.emailTiet)
         passwordTIET = findViewById(R.id.passTiet)
@@ -118,7 +115,7 @@ class RegisterActivity : AppCompatActivity() , UserProvider.FavoriteCheck{
     }
 
     fun createUser(usuario: Usuario?) {
-        mUserProvider!!.createUser(usuario!!).addOnCompleteListener { task ->
+        mUserProvider.createUser(usuario!!).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Toast.makeText(this@RegisterActivity, "¡Cuenta creada exitosamente!", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this@RegisterActivity, MapsActivity::class.java))
@@ -129,6 +126,7 @@ class RegisterActivity : AppCompatActivity() , UserProvider.FavoriteCheck{
     }
 
     override fun onFavoriteChecked(isFav: List<Boolean>) {
-        TODO("Not yet implemented")
+    }
+    override fun getUserName(name: String) {
     }
 }

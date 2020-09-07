@@ -4,7 +4,7 @@ import java.util.*
 
 class Comentario {
     constructor()
-    constructor(comentario: String?, calificacion: Double?, fecha: String?, nombreSitio: String?, nombreUsuario: String?, titulo: String?) {
+    constructor(comentario: String?, calificacion: Float?, fecha: String?, nombreSitio: String?, nombreUsuario: String?, titulo: String?) {
         this.comentario = comentario
         this.calificacion = calificacion
         this.fecha = fecha
@@ -14,7 +14,7 @@ class Comentario {
     }
 
     var comentario: String? = null
-    var calificacion: Double?= null
+    var calificacion: Float?= null
     var fecha: String? = null
     var nombreSitio: String? = null
     var nombreUsuario: String? = null

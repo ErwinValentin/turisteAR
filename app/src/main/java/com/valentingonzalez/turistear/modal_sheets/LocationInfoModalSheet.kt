@@ -2,7 +2,6 @@ package com.valentingonzalez.turistear.modal_sheets
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,8 @@ import com.valentingonzalez.turistear.providers.UserProvider
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
 import java.util.*
 
-class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.DiscoveredSites , UserProvider.FavoriteCheck{
-
+class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.DiscoveredSites , UserProvider.UserProviderListener{
+    //TODO mostrar imagenes de la base de datos
     private lateinit var locationID: String
     private var siteProvider: SiteProvider = SiteProvider(this)
     private var userProvider: UserProvider = UserProvider(this)
@@ -82,6 +81,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         ratingsButton.setOnClickListener{
             val intent = Intent(context, CommentActivity::class.java)
             intent.putExtra(getString(R.string.marker_location_key), currLocation)
+            intent.putExtra(getString(R.string.marker_title), nombre)
             startActivity(intent)
         }
         /*val userProvider = UserProvider()
@@ -139,5 +139,8 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         if(isFav.isNotEmpty() && isFav[0]){
             changeFavIcon(isFav[0])
         }
+    }
+
+    override fun getUserName(name: String) {
     }
 }

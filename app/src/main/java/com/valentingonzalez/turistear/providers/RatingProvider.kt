@@ -23,6 +23,9 @@ class RatingProvider (private val listener: SiteRatings){
             }
         })
     }
+    fun addRating(locationKey: String, rating: Comentario){
+        mRatingReference.child(locationKey).push().setValue(rating)
+    }
     interface SiteRatings{
         fun onRatingsRead(comentarios : List<Comentario>)
     }

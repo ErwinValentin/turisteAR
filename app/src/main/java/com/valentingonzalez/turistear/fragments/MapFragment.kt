@@ -2,6 +2,7 @@ package com.valentingonzalez.turistear.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.widget.Toast
@@ -27,14 +28,14 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     private var siteProvider: SiteProvider = SiteProvider(this)
     var guate: Marker? = null
     var marcadores: HashMap<Marker,Sitio> = HashMap()
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
-        mListener = if (activity is MarkerClickedListener) {
-            activity
-        } else {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            mListener = context as MarkerClickedListener
+        } catch (e: java.lang.ClassCastException){
             throw ClassCastException("$activity debe implementar el callback OnMarkerClickListener")
         }
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     }
 
     override fun onResume() {
