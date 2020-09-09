@@ -1,12 +1,7 @@
 package com.valentingonzalez.turistear.providers
 
-import android.net.Uri
-import android.util.Log
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.valentingonzalez.turistear.R
-import java.net.URL
 
 class ImageSourcesProvider (private val mListener: ImageListener){
 

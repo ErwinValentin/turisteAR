@@ -41,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
         emailTIET?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                emailTIL?.setError("")
+                emailTIL?.error = ""
             }
 
             override fun afterTextChanged(editable: Editable) {}
@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
         passwordTIET?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                passTIL?.setError("")
+                passTIL?.error = ""
             }
 
             override fun afterTextChanged(editable: Editable) {}

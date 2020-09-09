@@ -33,7 +33,6 @@ class SiteProvider( private val listener : DiscoveredSites){
                                 .title(s.nombre))
                         marker.tag = site.key
                         lista.put(marker,s)
-                        Log.d("Sitios",s.toString())
                     }
                 }
             }
@@ -58,7 +57,37 @@ class SiteProvider( private val listener : DiscoveredSites){
             }
         })
     }
+    fun getNearbySites(latitude: Double, longitud: Double, marcadores: HashMap<Marker, Sitio>, map: GoogleMap){
+        mSiteReference.orderByChild("latitud").startAt(latitude-0.03).endAt(latitude+0.003).addListenerForSingleValueEvent(object : ValueEventListener{
 
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                for(marcador in marcadores.keys){
+                    marcador.remove()
+                }
+
+                for(data in snapshot.children){
+
+                    val d:Sitio = data.getValue(Sitio::class.java)!!
+
+                    if(d.longitud!! <= longitud+0.003 && d.longitud!!>=longitud-0.003){
+                        val marker = map.addMarker(MarkerOptions()
+                                .position(LatLng(d.latitud!!,d.longitud!!))
+                                .title(d.nombre))
+                        marker.tag = data.key
+                        marcadores.put(marker, d)
+                    }
+
+                }
+
+            }
+
+        })
+    }
     interface DiscoveredSites{
         fun onDiscovered(lista: List<Boolean>)
     }

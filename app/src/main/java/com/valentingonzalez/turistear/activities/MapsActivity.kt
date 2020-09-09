@@ -90,6 +90,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     private fun loadMap() {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
+        //TODO pass marker search options to fragment
         fragmentTransaction.add(R.id.fragment_container, MapFragment())
         fragmentTransaction.commit()
     }

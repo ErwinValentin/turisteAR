@@ -5,7 +5,7 @@ class Usuario {
     var nombre: String? = null
     var email: String? = null
 
-    constructor() {}
+    constructor()
     constructor(id: String?, nombre: String?, email: String?) {
         this.id = id
         this.nombre = nombre

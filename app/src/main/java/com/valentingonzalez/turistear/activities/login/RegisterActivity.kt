@@ -45,7 +45,7 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
         nameTIET?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                nameTil?.setError("")
+                nameTil?.error = ""
             }
 
             override fun afterTextChanged(editable: Editable) {}
@@ -53,7 +53,7 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
         emailTIET?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                emailTil?.setError("")
+                emailTil?.error = ""
             }
 
             override fun afterTextChanged(editable: Editable) {}
@@ -61,7 +61,7 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
         passwordTIET?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                passTil?.setError("")
+                passTil?.error = ""
             }
 
             override fun afterTextChanged(editable: Editable) {}

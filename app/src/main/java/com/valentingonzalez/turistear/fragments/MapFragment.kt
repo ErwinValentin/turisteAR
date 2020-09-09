@@ -26,9 +26,10 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var mListener: MarkerClickedListener? = null
     private var siteProvider: SiteProvider = SiteProvider(this)
-    var guate: Marker? = null
     var marcadores: HashMap<Marker,Sitio> = HashMap()
+
     override fun onAttach(context: Context) {
+        //TODO receive marker options and display the correct markers
         super.onAttach(context)
         try {
             mListener = context as MarkerClickedListener
@@ -56,31 +57,31 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
             Toast.makeText(context!!,poi.name,Toast.LENGTH_SHORT ).show()
         }
 
-        if( ContextCompat.checkSelfPermission(
-                        context!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if( ContextCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             mGoogleMap.isMyLocationEnabled = true
-            siteProvider.getAllSites(marcadores,mGoogleMap)
+
             val lastLocation = fusedLocationProviderClient.lastLocation
             lastLocation.addOnSuccessListener { location ->
                 if(location != null){
                     currentLocation =location
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
+                    showNearby(location, marcadores, mGoogleMap, false)
                 }
             }
 
         }
+
         mGoogleMap.setOnMarkerClickListener(this)
     }
 
-    private fun addAllMarkers(sitios: List<Sitio>) {
-
-        for (s in sitios){
-            val marker = mGoogleMap.addMarker(MarkerOptions()
-                    .position(LatLng(s.latitud!!,s.longitud!!))
-                    .title(s.nombre))
-
+    private fun showNearby(location: Location, marcadores: HashMap<Marker,Sitio>, map: GoogleMap,b: Boolean) {
+        if(b){
+            siteProvider.getNearbySites(location.latitude, location.longitude, marcadores, mGoogleMap)
+        }else{
+            siteProvider.getAllSites(marcadores,mGoogleMap)
         }
     }
+
     override fun onMarkerClick(marker: Marker): Boolean {
         mListener!!.markerClicked(marcadores[marker], marker.tag.toString())
         return false
