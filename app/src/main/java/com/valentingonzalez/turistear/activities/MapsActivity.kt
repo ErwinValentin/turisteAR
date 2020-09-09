@@ -12,18 +12,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.gms.maps.model.Marker
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
-import com.valentingonzalez.turistear.activities.camera.CameraActivity1
 import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
-import com.valentingonzalez.turistear.models.Recurso
-import com.valentingonzalez.turistear.models.Secreto
 import com.valentingonzalez.turistear.models.Sitio
-import com.valentingonzalez.turistear.providers.SiteProvider
 
 class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener {
 

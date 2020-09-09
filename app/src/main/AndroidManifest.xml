@@ -36,12 +36,14 @@
             android:exported="false">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths" />
+                android:resource="@xml/filepaths"
+                />
         </provider>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="@string/google_maps_key"
+            />
 
         <activity
             android:name=".activities.MapsActivity"
@@ -61,7 +63,7 @@
             android:name=".activities.login.RegisterActivity"
             android:parentActivityName=".activities.login.LoginActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".activities.camera.CameraActivity1" />
+        <activity android:name=".activities.camera.ARCameraActivity" />
         <activity android:name=".activities.SecretDetailActivity"
             android:parentActivityName=".activities.MapsActivity"/>
         <activity android:name=".activities.CommentActivity"
@@ -81,6 +83,7 @@
         </activity>
         <activity android:name=".activities.SearchOptionsActivity"
             android:parentActivityName=".activities.MapsActivity"/>
+        <activity android:name=".activities.camera.QRCameraActivity" />
 
     </application>
 

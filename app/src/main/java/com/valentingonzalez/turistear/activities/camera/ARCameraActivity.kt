@@ -1,17 +1,15 @@
 package com.valentingonzalez.turistear.activities.camera
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
+import android.util.Size
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,16 +17,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.firebase.storage.ktx.storageMetadata
+import com.google.mlkit.vision.barcode.Barcode
+import com.valentingonzalez.turistear.BarcodeAnalyzer
 import com.valentingonzalez.turistear.R
-import kotlinx.android.synthetic.main.camera_layout1.*
+import kotlinx.android.synthetic.main.camera_ar_layout.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraActivity1 : AppCompatActivity() {
+class ARCameraActivity : AppCompatActivity(){
     private var imageCapture : ImageCapture? = null
+    private lateinit var imageAnalyzer : ImageAnalysis
 
     private lateinit var outputDir: File
     private lateinit var cameraExecutor: ExecutorService
@@ -36,7 +37,7 @@ class CameraActivity1 : AppCompatActivity() {
 
     override fun onCreate( savedInstanceState : Bundle?){
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.camera_layout1)
+        setContentView(R.layout.camera_ar_layout)
         currLocation = intent.getStringExtra(getString(R.string.marker_location_key))!!
         if(allPermisionsGranted()){
             startCamera()
@@ -45,8 +46,32 @@ class CameraActivity1 : AppCompatActivity() {
         }
 
         camera_capture_button.setOnClickListener{ takePhoto() }
+        var scan = false
+        var scannedCode = ""
+        qr_scan_button.setOnClickListener{
+//            val intent = Intent(this, QRCameraActivity::class.java)
+//            intent.putExtra(getString(R.string.marker_location_key), currLocation)
+//            startActivity(intent)
+            if(!scan){
+                scan = true
+                imageAnalyzer.setAnalyzer(Executors.newSingleThreadExecutor(), BarcodeAnalyzer{
+                    if(scannedCode != it){
+                        scannedCode = it
+                        Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }else{
+                scan = false
+                imageAnalyzer.clearAnalyzer()
+            }
+        }
         outputDir = File(applicationContext.getExternalFilesDir(null).toString()+"/TouristeAR/"+currLocation)
         cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun scanCode() {
+        val imageAnalyzer = imageAnalyzer?:return
+
     }
 
     private fun takePhoto() {
@@ -110,12 +135,18 @@ class CameraActivity1 : AppCompatActivity() {
                     }
             imageCapture = ImageCapture.Builder()
                     .build()
+
+            imageAnalyzer = ImageAnalysis.Builder()
+                    .setTargetResolution(Size(1280,720))
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .setTargetRotation(viewFinder.display.rotation)
+                    .build()
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try{
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
-                        this, cameraSelector, preview, imageCapture)
+                        this, cameraSelector, preview, imageCapture, imageAnalyzer)
             }catch (exc: Exception){
                 Log.e(TAG, "Use case binding failed", exc)
             }
@@ -126,9 +157,8 @@ class CameraActivity1 : AppCompatActivity() {
         ContextCompat.checkSelfPermission(
                 baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
-    override fun onRequestPermissionsResult(
-         requestCode: Int, permissions: Array<String>, grantResults: IntArray
-    ){
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
         if(requestCode == REQUEST_CODE_PERMISSIONS){
             if(allPermisionsGranted()){
                 startCamera()
@@ -155,7 +185,7 @@ class CameraActivity1 : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "CameraXBasic"
+        private const val TAG = "CameraXAR"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)

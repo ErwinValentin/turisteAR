@@ -1,6 +1,5 @@
 package com.valentingonzalez.turistear.modal_sheets
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,12 +16,11 @@ import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.CommentActivity
 import com.valentingonzalez.turistear.activities.SecretDetailActivity
 import com.valentingonzalez.turistear.activities.ShareGalleryActivity
-import com.valentingonzalez.turistear.activities.camera.CameraActivity1
+import com.valentingonzalez.turistear.activities.camera.ARCameraActivity
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
-import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
 import java.util.*
 
@@ -76,7 +74,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         descView.text = b.getString(getString(R.string.marker_description))
         val openCamera: ImageButton = layout.findViewById(R.id.modal_camera_button)
         openCamera.setOnClickListener{
-            val intent = Intent(context, CameraActivity1::class.java)
+            val intent = Intent(context, ARCameraActivity::class.java)
             intent.putExtra(getString(R.string.marker_location_key), currLocation)
             startActivity(intent)
         }
