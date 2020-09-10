@@ -20,12 +20,12 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.providers.SiteProvider
 
-class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener, SiteProvider.DiscoveredSites {
+class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener{
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var currentLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var mListener: MarkerClickedListener? = null
-    private var siteProvider: SiteProvider = SiteProvider(this)
+    private var siteProvider: SiteProvider = SiteProvider()
     var marcadores: HashMap<Marker,Sitio> = HashMap()
 
     override fun onAttach(context: Context) {
@@ -89,9 +89,5 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
     interface MarkerClickedListener {
         fun markerClicked(sitio: Sitio?, key: String)
-    }
-
-    override fun onDiscovered(lista: List<Boolean>) {
-
     }
 }

@@ -13,13 +13,15 @@ import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SecretProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
+import com.valentingonzalez.turistear.providers.UserSecretProvider
 import com.valentingonzalez.turistear.includes.BasicToolbar.show
 
 
-class SecretDetailActivity : AppCompatActivity(), SiteProvider.DiscoveredSites, SecretProvider.SiteSecrets, UserProvider.UserProviderListener{
+class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, UserProvider.UserProviderListener, UserSecretProvider.UserSecrets{
 
     private val secretProvider: SecretProvider = SecretProvider(this)
-    private var siteProvider: SiteProvider = SiteProvider(this)
+    private var siteProvider: SiteProvider = SiteProvider()
+    private val userSecretProvider: UserSecretProvider = UserSecretProvider(this)
     private val userProvider: UserProvider = UserProvider(this)
     private var mFirebaseAuth: AuthProvider = AuthProvider()
     private lateinit var currLocation: String
@@ -35,15 +37,10 @@ class SecretDetailActivity : AppCompatActivity(), SiteProvider.DiscoveredSites, 
         Log.d("Extras", intent.extras?.getString(getString(R.string.marker_location_key))!!)
         currLocation = intent.extras?.getString(getString(R.string.marker_location_key))!!
         if(mFirebaseAuth.currentUser()!=null){
-            siteProvider.getSiteDiscoveredSecrets(FirebaseAuth.getInstance().uid.toString(),currLocation)
+            userSecretProvider.getSiteDiscoveredSecrets(FirebaseAuth.getInstance().uid.toString(),currLocation)
         }
     }
 
-
-    override fun onDiscovered(lista: List<Boolean>) {
-        obtainedList = lista
-        secretProvider.getSecrets(currLocation)
-    }
 
     override fun onSecretDiscovered(secretList: List<Secreto>) {
         siteSecretsList = secretList
@@ -59,6 +56,15 @@ class SecretDetailActivity : AppCompatActivity(), SiteProvider.DiscoveredSites, 
     }
 
     override fun getUserName(name: String) {
+    }
+
+    override fun onSiteDiscoveredStatus(obtained: List<Boolean>) {
+        obtainedList = obtained
+        secretProvider.getSecrets(currLocation)
+    }
+
+    override fun onSecretDiscovered() {
+
     }
 
 }

@@ -21,11 +21,13 @@ import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
+import com.valentingonzalez.turistear.providers.UserSecretProvider
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
 import java.util.*
 
-class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.DiscoveredSites , UserProvider.UserProviderListener{
-    private var siteProvider: SiteProvider = SiteProvider(this)
+class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.UserSecrets, UserProvider.UserProviderListener{
+    private var siteProvider: SiteProvider = SiteProvider()
+    private var userSecretProvider : UserSecretProvider = UserSecretProvider(this)
     private var userProvider: UserProvider = UserProvider(this)
     private var mFirebaseAuth: AuthProvider = AuthProvider()
     private var mStorage : StorageReference = FirebaseStorage.getInstance().reference
@@ -61,7 +63,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
                     .into(main_image)
         }
         if(mFirebaseAuth.currentUser()!=null){
-            siteProvider.getSiteDiscoveredSecrets(FirebaseAuth.getInstance().currentUser!!.uid, currLocation)
+            userSecretProvider.getSiteDiscoveredSecrets(FirebaseAuth.getInstance().currentUser!!.uid, currLocation)
         }
         showSecrets.setOnClickListener{
             val intent = Intent(context, SecretDetailActivity::class.java)
@@ -153,11 +155,6 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
         }
     }
 
-    override fun onDiscovered(lista: List<Boolean>) {
-        val count = lista.count{ it }
-        secrets_amount.text = "$count/3"
-    }
-
     override fun onFavoriteChecked(isFav: List<Boolean>) {
         if(isFav.isNotEmpty() && isFav[0]){
             changeFavIcon(isFav[0])
@@ -165,5 +162,14 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), SiteProvider.Discove
     }
 
     override fun getUserName(name: String) {
+    }
+
+    override fun onSiteDiscoveredStatus(obtained: List<Boolean>) {
+        val count = obtained.count{ it }
+        secrets_amount.text = "$count/3"
+    }
+
+    override fun onSecretDiscovered() {
+
     }
 }

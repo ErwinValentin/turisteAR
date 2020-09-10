@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
@@ -17,14 +16,14 @@ import com.valentingonzalez.turistear.providers.AuthProvider
 import dmax.dialog.SpotsDialog
 
 class LoginActivity : AppCompatActivity() {
-    lateinit var mAuthProvider: AuthProvider
-    var mLoginButton: MaterialButton? = null
-    var mRegisterButton: MaterialButton? = null
-    var emailTIET: TextInputEditText? = null
-    var passwordTIET: TextInputEditText? = null
-    var emailTIL: TextInputLayout? = null
-    var passTIL: TextInputLayout? = null
-    var progessDialog: AlertDialog? = null
+    private lateinit var mAuthProvider: AuthProvider
+    private var mLoginButton: MaterialButton? = null
+    private var mRegisterButton: MaterialButton? = null
+    private var emailTIET: TextInputEditText? = null
+    private var passwordTIET: TextInputEditText? = null
+    private var emailTIL: TextInputLayout? = null
+    private var passTIL: TextInputLayout? = null
+    private var progressDialog: AlertDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_layout)
@@ -55,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
             override fun afterTextChanged(editable: Editable) {}
         })
 
-        progessDialog = SpotsDialog.Builder().setContext(this@LoginActivity).setMessage("Conectando...").build()
+        progressDialog = SpotsDialog.Builder().setContext(this@LoginActivity).setMessage("Conectando...").build()
         mLoginButton = findViewById(R.id.login_button)
         mLoginButton?.setOnClickListener{ login() }
 
@@ -84,14 +83,14 @@ class LoginActivity : AppCompatActivity() {
         if (emptyEmail || emptyPass || under6Pass) {
             return
         }
-        progessDialog!!.show()
+        progressDialog!!.show()
         mAuthProvider.login(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 startActivity(Intent(this@LoginActivity, MapsActivity::class.java))
             } else {
                 Toast.makeText(this@LoginActivity, "Error con email o password", Toast.LENGTH_SHORT).show()
             }
-            progessDialog!!.dismiss()
+            progressDialog!!.dismiss()
         }
     }
 }
