@@ -19,6 +19,33 @@ class SiteProvider{
         mSecretReference.child(key).setValue(secrets)
         return mSiteReference.child(key).setValue(sitio)
     }
+    fun getSites(latitud: Double, longitud: Double, distancia: Int?, tipos: ArrayList<String>?, titleContains: String?,markers: HashMap<Marker, Sitio>, map: GoogleMap, all: Boolean ){
+        if(all){
+            getAllSites(markers, map)
+        }else{
+            if(distancia!= null && tipos==null && titleContains == null){
+                getNearbySites(latitud, longitud, distancia ,markers, map)
+            }
+            if(distancia== null && tipos!=null && titleContains == null) {
+                getSitesByType(latitud, longitud, tipos, markers, map)
+            }
+            if(distancia== null && tipos==null && titleContains != null) {
+                getSitesByTitle(latitud, longitud, titleContains , markers, map)
+            }
+            if(distancia!= null && tipos!=null && titleContains == null) {
+                getSitesByDistanceAndType(latitud, longitud, distancia, tipos, markers, map)
+            }
+            if(distancia!= null && tipos==null && titleContains != null) {
+                getSitesByDistanceAndTitle(latitud, longitud, distancia, titleContains, markers, map)
+            }
+            if(distancia== null && tipos!=null && titleContains != null) {
+                getSitesByTypeAndTitle(latitud, longitud, tipos, titleContains, markers, map)
+            }
+            if(distancia!= null && tipos!=null && titleContains != null) {
+                getSitesWithAllConditions(latitud, longitud, distancia, tipos, titleContains, markers, map)
+            }
+        }
+    }
 
     fun getAllSites(lista: HashMap<Marker,Sitio>, map: GoogleMap){
         mSiteReference.addValueEventListener(object : ValueEventListener{
@@ -32,7 +59,7 @@ class SiteProvider{
                                 .position(LatLng(s?.latitud!!,s.longitud!!))
                                 .title(s.nombre))
                         marker.tag = site.key
-                        lista.put(marker,s)
+                        lista[marker] = s
                     }
                 }
             }
@@ -40,7 +67,8 @@ class SiteProvider{
             }
         })
     }
-    fun getNearbySites(latitude: Double, longitud: Double, marcadores: HashMap<Marker, Sitio>, map: GoogleMap){
+    fun getNearbySites(latitude: Double, longitud: Double,distancia: Int, marcadores: HashMap<Marker, Sitio>, map: GoogleMap){
+        //TODO convertir distancia a las coordenadas y cambiar el 0.03 por la distancia especificada
         mSiteReference.orderByChild("latitud").startAt(latitude-0.03).endAt(latitude+0.003).addListenerForSingleValueEvent(object : ValueEventListener{
 
             override fun onCancelled(error: DatabaseError) {
@@ -61,7 +89,7 @@ class SiteProvider{
                                 .position(LatLng(d.latitud!!,d.longitud!!))
                                 .title(d.nombre))
                         marker.tag = data.key
-                        marcadores.put(marker, d)
+                        marcadores[marker] = d
                     }
 
                 }
@@ -69,6 +97,19 @@ class SiteProvider{
             }
 
         })
+    }
+
+    fun getSitesByType(latitude: Double, longitud: Double, tipos: ArrayList<String>, marcadores: HashMap<Marker, Sitio>, map: GoogleMap){
+    }
+    fun getSitesByTitle(latitude: Double, longitud: Double, titulo: String, marcadores: HashMap<Marker, Sitio>, map: GoogleMap){
+    }
+    fun getSitesByDistanceAndType(latitude: Double, longitud: Double, distancia: Int, tipos: ArrayList<String>, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
+    }
+    fun getSitesByDistanceAndTitle(latitude: Double, longitud: Double, distancia: Int, titulo: String , marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
+    }
+    fun getSitesByTypeAndTitle(latitude: Double, longitud: Double, tipos: ArrayList<String>, titulo: String, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
+    }
+    fun getSitesWithAllConditions(latitude: Double, longitud: Double, distancia: Int, tipos: ArrayList<String>, titulo: String, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
     }
 //    interface DiscoveredSites{
 //        fun onDiscovered(lista: List<Boolean>)

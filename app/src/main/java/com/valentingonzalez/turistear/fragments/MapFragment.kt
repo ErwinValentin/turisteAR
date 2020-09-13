@@ -61,10 +61,14 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
         if( ContextCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             mGoogleMap.isMyLocationEnabled = true
-            val searchAll: Boolean = arguments!!.getBoolean("ALL")
-            val searchDistance = arguments!!.getDouble("DISTANCE")
-            val searchTypes: ArrayList<String>? = arguments!!.getStringArrayList("TYPES")
-            val searchIncludes: String? = arguments!!.getString("INCLUDES")
+            var searchAll = false
+            if(arguments != null){
+                searchAll  = arguments!!.getBoolean("ALL", false)
+            }
+
+            val searchDistance = arguments?.getInt("DISTANCE")
+            val searchTypes  = arguments?.getStringArrayList("TYPES")
+            val searchIncludes = arguments?.getString("INCLUDES")
 
             val lastLocation = fusedLocationProviderClient.lastLocation
             lastLocation.addOnSuccessListener { location ->
@@ -74,7 +78,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
                     /*TODO pasar seach distance,
                     *  if(searchTypes[0] != "ALL") filtrar marcadores por tipo
                     *  if(searchIncludes != "") filtrar por nombre*/
-                    showNearby(location, marcadores, mGoogleMap, searchAll)
+                    siteProvider.getSites(location.latitude, location.longitude, searchDistance ,searchTypes, searchIncludes, marcadores, mGoogleMap, searchAll)
                 }
             }
 
@@ -83,13 +87,13 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
         mGoogleMap.setOnMarkerClickListener(this)
     }
 
-    private fun showNearby(location: Location, marcadores: HashMap<Marker,Sitio>, map: GoogleMap,b: Boolean) {
-        if(b){
-            siteProvider.getNearbySites(location.latitude, location.longitude, marcadores, mGoogleMap)
-        }else{
-            siteProvider.getAllSites(marcadores,mGoogleMap)
-        }
-    }
+//    private fun showNearby(location: Location, marcadores: HashMap<Marker,Sitio>, map: GoogleMap,b: Boolean) {
+//        if(b){
+//            siteProvider.getNearbySites(location.latitude, location.longitude, marcadores, mGoogleMap)
+//        }else{
+//            siteProvider.getAllSites(marcadores,mGoogleMap)
+//        }
+//    }
 
     override fun onMarkerClick(marker: Marker): Boolean {
         mListener!!.markerClicked(marcadores[marker], marker.tag.toString())
