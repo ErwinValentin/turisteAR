@@ -82,7 +82,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.SearchOptionsActivity"
-            android:parentActivityName=".activities.MapsActivity"/>
+            android:parentActivityName=".activities.MapsActivity"
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".activities.camera.QRCameraActivity" />
 
     </application>

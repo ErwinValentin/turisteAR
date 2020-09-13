@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.Toast
@@ -53,7 +54,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         searchIcon.setOnClickListener {
             searchALL = !searchALL
             loadMap()
-            //startActivityForResult(Intent(this, SearchOptionsActivity::class.java), SEARCH_ACTIVITY_REQUEST)
+            startActivityForResult(Intent(this, SearchOptionsActivity::class.java), SEARCH_ACTIVITY_REQUEST)
         }
         accountIcon.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -115,7 +116,10 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         super.onActivityResult(requestCode, resultCode, data)
         //TODO change arguments based on intent data
         //if(resultCode == SEARCH_ACTIVITY_REQUEST)
-        loadMap()
+        Log.d("DISTANCE", data?.getIntExtra("DISTANCE", 0).toString())
+        Log.d("TYPES", data?.getStringArrayListExtra("TYPES").toString())
+        Log.d("CONTAINS", data?.getStringExtra("CONTAINS").toString())
+        //loadMap()
     }
 
     override fun onBackPressed() {

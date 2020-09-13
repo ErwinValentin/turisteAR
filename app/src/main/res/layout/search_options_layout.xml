@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/basic_toolbar"/>
 
@@ -8,7 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/search_text_til"
-        android:hint="Nombre del lugar">
+        android:hint="Nombre del lugar"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:boxBackgroundColor="@android:color/transparent"
+        android:background="@android:color/transparent">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -18,26 +24,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Elija un tipo de lugar"
-        android:id="@+id/search_type_label"/>
-    <Spinner
+        android:id="@+id/search_type_label"
+        android:layout_margin="5dp"/>
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search_type_spinner"/>
+        android:id="@+id/location_types_rv"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Elije una distancia"
-        android:id="@+id/search_distance_label"/>
+        android:id="@+id/search_distance_label"
+        android:layout_margin="5dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Distancia %d m"
+        android:text="Distancia 100 m"
         android:textAlignment="center"
-        android:id="@+id/search_distance_value"/>
+        android:id="@+id/search_distance_value"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"/>
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/search_distance_bar"
-        android:progress="30"/>
-
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:progress="10"/>
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="buscar"
+    android:id="@+id/search_confirm_button"
+    app:icon="@drawable/ic_search_white_24dp"
+    app:iconGravity="textStart"
+    android:layout_gravity="center"/>
 </LinearLayout>
