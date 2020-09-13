@@ -1,6 +1,7 @@
 package com.valentingonzalez.turistear.activities
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
@@ -19,12 +20,17 @@ import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
 import com.valentingonzalez.turistear.models.Sitio
+import kotlin.collections.HashMap
 
 class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var actionbarToggle: ActionBarDrawerToggle
     private lateinit var navView: NavigationView
+    private var searchDistance = 0.03
+    private var searchTypes = ArrayList<String>(listOf("ALL"))
+    private var searchIncludes = ""
+    private var searchALL = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +45,17 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         navView.setNavigationItemSelectedListener(this)
         //testCreateSitio()
 
-        val account_icon:ImageView = findViewById(R.id.toolbar_account_icon)
-        account_icon.setOnClickListener {
+        val accountIcon:ImageView = findViewById(R.id.toolbar_account_icon)
+        accountIcon.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+        val searchIcon: ImageView = findViewById(R.id.toolbar_search_icon)
+        searchIcon.setOnClickListener {
+            searchALL = !searchALL
+            loadMap()
+            //startActivityForResult(Intent(this, SearchOptionsActivity::class.java), SEARCH_ACTIVITY_REQUEST)
+        }
+        accountIcon.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -79,15 +94,28 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     }
 
     private fun showLocationSelector() {
-        //TODO show a diaglog with some predetermined locations
+        //TODO show a dialog with some predetermined locations
     }
 
     private fun loadMap() {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        //TODO pass marker search options to fragment
-        fragmentTransaction.add(R.id.fragment_container, MapFragment())
+        val mapFragment = MapFragment()
+        val argumentsBundle = Bundle()
+        argumentsBundle.putDouble("DISTANCE", searchDistance)
+        argumentsBundle.putStringArrayList("TYPES", searchTypes)
+        argumentsBundle.putString("INCLUDES", searchIncludes)
+        argumentsBundle.putBoolean("ALL", searchALL)
+        mapFragment.arguments = argumentsBundle
+        fragmentTransaction.add(R.id.fragment_container, mapFragment)
         fragmentTransaction.commit()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //TODO change arguments based on intent data
+        //if(resultCode == SEARCH_ACTIVITY_REQUEST)
+        loadMap()
     }
 
     override fun onBackPressed() {
@@ -112,6 +140,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     companion object {
         private const val TAG = "MapsActivity"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private const val SEARCH_ACTIVITY_REQUEST = 2011
         private const val REQUEST_CODE_PERMISSIONS = 9001
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     }

@@ -8,7 +8,6 @@ class RatingProvider (private val listener: SiteRatings){
     fun getRatings(key: String){
         mRatingReference.child(key).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {

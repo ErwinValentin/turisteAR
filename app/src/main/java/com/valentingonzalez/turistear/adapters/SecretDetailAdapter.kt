@@ -43,7 +43,6 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
         val currentObtained = obtained[position]
         val isFav = favorites[position]
 
-        //TODO grab images from Firebase and place them
         val fbStorage = FirebaseStorage.getInstance().reference
         val path = fbStorage.child("$currLocation/secrets/${currentItem.recursos!![0].valor}").downloadUrl.addOnSuccessListener {
             Picasso.get().load(it).placeholder(R.drawable.landscape_sample).into(holder.secretMainImage)
@@ -68,7 +67,6 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
             holder.secretFavorite.tag = 0
         }
         holder.secretFavorite.setOnClickListener{
-            //TODO if not discovered cannot fav
             if(it.tag==0){
                 holder.secretFavorite.setImageResource(R.drawable.ic_favorite_red_400_24dp)
                 it.tag = 1

@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.providers.SiteProvider
+import java.util.ArrayList
 
 class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener{
     private lateinit var mGoogleMap: GoogleMap
@@ -37,6 +38,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
             throw ClassCastException("$activity debe implementar el callback OnMarkerClickListener")
         }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+
     }
 
     override fun onResume() {
@@ -59,13 +61,20 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
         if( ContextCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             mGoogleMap.isMyLocationEnabled = true
+            val searchAll: Boolean = arguments!!.getBoolean("ALL")
+            val searchDistance = arguments!!.getDouble("DISTANCE")
+            val searchTypes: ArrayList<String>? = arguments!!.getStringArrayList("TYPES")
+            val searchIncludes: String? = arguments!!.getString("INCLUDES")
 
             val lastLocation = fusedLocationProviderClient.lastLocation
             lastLocation.addOnSuccessListener { location ->
                 if(location != null){
                     currentLocation =location
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
-                    showNearby(location, marcadores, mGoogleMap, false)
+                    /*TODO pasar seach distance,
+                    *  if(searchTypes[0] != "ALL") filtrar marcadores por tipo
+                    *  if(searchIncludes != "") filtrar por nombre*/
+                    showNearby(location, marcadores, mGoogleMap, searchAll)
                 }
             }
 

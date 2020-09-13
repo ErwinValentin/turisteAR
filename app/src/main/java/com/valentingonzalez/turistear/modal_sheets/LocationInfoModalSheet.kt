@@ -43,7 +43,6 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //TODO get secret amount from user, show on layout
         val layout = inflater.inflate(R.layout.modal_sheet_v2, container, false)
         val b = arguments
         val titleView = layout.findViewById<TextView>(R.id.modal_location_title_tv)

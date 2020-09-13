@@ -37,7 +37,6 @@ class UserProvider(private var listener : UserProviderListener) {
         mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos")
                 .orderByChild("llave").equalTo(location).addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
-                        TODO("Not yet implemented")
                     }
 
                     override fun onDataChange(snapshot: DataSnapshot) {
@@ -56,7 +55,6 @@ class UserProvider(private var listener : UserProviderListener) {
         mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos")
                 .orderByChild("llave").equalTo(key).addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {
-                        TODO("Not yet implemented")
                     }
 
                     override fun onDataChange(snapshot: DataSnapshot) {

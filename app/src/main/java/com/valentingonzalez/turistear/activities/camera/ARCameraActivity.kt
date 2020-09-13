@@ -77,6 +77,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets {
                             if (listaDescubiertos[numero]) {
                                 Toast.makeText(this, "Ya has descubierto este secreto", Toast.LENGTH_SHORT).show()
                             } else {
+                                //TODO check for physical proximity
                                 userSecretProvider.addSecretToDiscovered(uId, currLocation, numero)
                             }
 
