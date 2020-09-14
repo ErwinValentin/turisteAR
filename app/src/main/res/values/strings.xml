@@ -34,4 +34,5 @@
     <string name="user_id">User ID</string>
     <string name="review_dialog_prompt">¿Qué opinas sobre este sitio?</string>
     <string name="image_src_personal">Personal</string>
+    <string name="proximo_nivel_en">Proximo nivel en: %1$d pts</string>
 </resources>

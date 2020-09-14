@@ -18,6 +18,7 @@ import com.valentingonzalez.turistear.activities.SecretDetailActivity
 import com.valentingonzalez.turistear.activities.ShareGalleryActivity
 import com.valentingonzalez.turistear.activities.camera.ARCameraActivity
 import com.valentingonzalez.turistear.models.FavoritoUsuario
+import com.valentingonzalez.turistear.models.Usuario
 import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
@@ -166,7 +167,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
         }
     }
 
-    override fun getUserName(name: String) {
+    override fun getUserName(user: Usuario) {
     }
 
     override fun onSiteDiscoveredStatus(obtained: List<Boolean>) {

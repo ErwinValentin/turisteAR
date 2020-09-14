@@ -19,11 +19,11 @@ class UserProvider(private var listener : UserProviderListener) {
 
     fun getUser() {
         val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
-        mUserReference.child(currentUser).addListenerForSingleValueEvent(object : ValueEventListener {
+        mUserReference.child(currentUser).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val u = snapshot.getValue(Usuario::class.java)!!
                 Log.d("Usuario", u.toString())
-                listener.getUserName(u.nombre!!)
+                listener.getUserName(u)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -81,12 +81,8 @@ class UserProvider(private var listener : UserProviderListener) {
 
                 })
     }
-
-    fun getUserLevel(uId: String){
-
-    }
     interface UserProviderListener {
         fun onFavoriteChecked(isFav : List<Boolean>)
-        fun getUserName(name: String)
+        fun getUserName(user: Usuario)
     }
 }

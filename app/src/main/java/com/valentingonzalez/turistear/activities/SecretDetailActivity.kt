@@ -15,6 +15,7 @@ import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
 import com.valentingonzalez.turistear.providers.UserSecretProvider
 import com.valentingonzalez.turistear.includes.BasicToolbar.show
+import com.valentingonzalez.turistear.models.Usuario
 
 
 class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, UserProvider.UserProviderListener, UserSecretProvider.UserSecrets{
@@ -55,7 +56,7 @@ class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, Us
         secretsRecyclerView.setHasFixedSize(true)
     }
 
-    override fun getUserName(name: String) {
+    override fun getUserName(user: Usuario) {
     }
 
     override fun onSiteDiscoveredStatus(obtained: List<Boolean>) {

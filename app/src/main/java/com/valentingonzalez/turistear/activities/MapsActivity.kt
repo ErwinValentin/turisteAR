@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -22,14 +24,23 @@ import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
 import com.valentingonzalez.turistear.models.Sitio
+import com.valentingonzalez.turistear.models.Usuario
+import com.valentingonzalez.turistear.providers.UserProvider
 import java.util.ArrayList
 import kotlin.collections.HashMap
 
-class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener {
+class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener, UserProvider.UserProviderListener {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var actionbarToggle: ActionBarDrawerToggle
     private lateinit var navView: NavigationView
+    private lateinit var accountIcon:ImageView
+    private lateinit var searchIcon: ImageView
+    private lateinit var levelProgressBar: ProgressBar
+    private lateinit var currentLevel: TextView
+    private lateinit var levelProgressText: TextView
+
+    private var userProvider = UserProvider(this)
     private var searchDistance = 0.03
     private var searchTypes = ArrayList<String>(listOf())
     private var searchIncludes = ""
@@ -37,6 +48,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //TODO update toolbar level and remaining points
+        userProvider.getUser()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         drawerLayout = findViewById(R.id.maps_activity_drawer)
@@ -49,19 +61,20 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         navView.setNavigationItemSelectedListener(this)
         //testCreateSitio()
 
-        val accountIcon:ImageView = findViewById(R.id.toolbar_account_icon)
+        accountIcon = findViewById(R.id.toolbar_account_icon)
         accountIcon.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
-        val searchIcon: ImageView = findViewById(R.id.toolbar_search_icon)
+        searchIcon = findViewById(R.id.toolbar_search_icon)
         searchIcon.setOnClickListener {
 //            searchALL = !searchALL
 //            loadMap()
             startActivityForResult(Intent(this, SearchOptionsActivity::class.java), SEARCH_ACTIVITY_REQUEST)
         }
-        accountIcon.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
+        levelProgressBar = findViewById(R.id.level_progress_bar)
+        currentLevel = findViewById(R.id.level_view)
+        levelProgressText = findViewById(R.id.level_progress_text)
+        userProvider.getUser()
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if(allPermisionsGranted()){
             loadMap()
@@ -173,5 +186,15 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onFavoriteChecked(isFav: List<Boolean>) {
+    }
+
+    override fun getUserName(user: Usuario) {
+        currentLevel.text = user.nivelActual.toString()
+        val toNextLevel = user.puntosTotales!!.rem(100)
+        levelProgressBar.progress = toNextLevel
+        levelProgressText.text = getString(R.string.proximo_nivel_en, 100 - toNextLevel)
     }
 }

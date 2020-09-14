@@ -122,6 +122,6 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
     }
     override fun onFavoriteChecked(isFav: List<Boolean>) {
     }
-    override fun getUserName(name: String) {
+    override fun getUserName(user: Usuario) {
     }
 }

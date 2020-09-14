@@ -31,15 +31,15 @@ class RatingProvider (private val listener: SiteRatings){
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                var rating : Double = 0.0
+                var rate  = 0.0
                 var count = 0
-                for( rate in snapshot.children){
-                    val r = rate.getValue(Comentario:: class.java)
-                    rating+= r!!.calificacion!!
+                for( snapshotRating in snapshot.children){
+                    val r = snapshotRating.getValue(Comentario:: class.java)
+                    rate += r!!.calificacion!!
                     count++
                 }
-                Log.d("RATING AVERAGE", (rating/count).toString())
-                val avg = ((rating/count)*100).toInt()
+                Log.d("RATING AVERAGE", (rate/count).toString())
+                val avg = ((rate/count)*100).toInt()
                 val avg2Dec  = avg/100.0
                 FirebaseDatabase.getInstance().reference.child("Sitios").child(locationKey).child("rating").setValue(avg2Dec)
             }

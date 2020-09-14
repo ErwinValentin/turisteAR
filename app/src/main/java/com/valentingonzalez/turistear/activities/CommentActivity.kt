@@ -13,6 +13,7 @@ import com.valentingonzalez.turistear.adapters.CommentAdapter
 import com.valentingonzalez.turistear.fragments.AddReviewDialogFragment
 import com.valentingonzalez.turistear.includes.BasicToolbar
 import com.valentingonzalez.turistear.models.Comentario
+import com.valentingonzalez.turistear.models.Usuario
 import com.valentingonzalez.turistear.providers.RatingProvider
 import com.valentingonzalez.turistear.providers.UserProvider
 import java.util.*
@@ -73,8 +74,8 @@ class CommentActivity : AppCompatActivity(), RatingProvider.SiteRatings, AddRevi
     override fun onFavoriteChecked(isFav: List<Boolean>) {
     }
 
-    override fun getUserName(name: String) {
-        newRating.nombreUsuario = name
+    override fun getUserName(user: Usuario) {
+        newRating.nombreUsuario = user.nombre
         ratingsProvider.addRating(locationKey , newRating)
     }
 }
