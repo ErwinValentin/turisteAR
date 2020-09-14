@@ -1,6 +1,7 @@
 package com.valentingonzalez.turistear.activities
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -21,6 +22,7 @@ import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
 import com.valentingonzalez.turistear.models.Sitio
+import java.util.ArrayList
 import kotlin.collections.HashMap
 
 class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener {
@@ -29,11 +31,12 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     private lateinit var actionbarToggle: ActionBarDrawerToggle
     private lateinit var navView: NavigationView
     private var searchDistance = 0.03
-    private var searchTypes = ArrayList<String>(listOf("ALL"))
+    private var searchTypes = ArrayList<String>(listOf())
     private var searchIncludes = ""
     private var searchALL = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //TODO update toolbar level and remaining points
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         drawerLayout = findViewById(R.id.maps_activity_drawer)
@@ -52,8 +55,8 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         }
         val searchIcon: ImageView = findViewById(R.id.toolbar_search_icon)
         searchIcon.setOnClickListener {
-            searchALL = !searchALL
-            loadMap()
+//            searchALL = !searchALL
+//            loadMap()
             startActivityForResult(Intent(this, SearchOptionsActivity::class.java), SEARCH_ACTIVITY_REQUEST)
         }
         accountIcon.setOnClickListener {
@@ -114,12 +117,17 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        //TODO change arguments based on intent data
-        //if(resultCode == SEARCH_ACTIVITY_REQUEST)
-        Log.d("DISTANCE", data?.getIntExtra("DISTANCE", 0).toString())
-        Log.d("TYPES", data?.getStringArrayListExtra("TYPES").toString())
-        Log.d("CONTAINS", data?.getStringExtra("CONTAINS").toString())
-        //loadMap()
+        if(data != null && resultCode == Activity.RESULT_OK) {
+            //TODO change arguments based on intent data
+            //if(resultCode == SEARCH_ACTIVITY_REQUEST)
+            searchTypes.clear()
+            searchTypes = data.getStringArrayListExtra("TYPES")!!
+            searchIncludes = data.getStringExtra("CONTAINS")!!
+            Log.d("DISTANCE", data.getIntExtra("DISTANCE", 0).toString())
+            Log.d("TYPES", data.getStringArrayListExtra("TYPES")!!.toString())
+            Log.d("CONTAINS", data.getStringExtra("CONTAINS")!!.toString())
+            loadMap()
+        }
     }
 
     override fun onBackPressed() {
@@ -131,10 +139,12 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     override fun markerClicked(sitio: Sitio?, key: String) {
         //Toast.makeText(this@MapsActivity, marker!!.title, Toast.LENGTH_SHORT).show()
         val bundle = Bundle()
+        Log.d("SITIOMODAL", sitio.toString())
         bundle.putString(getString(R.string.marker_title), sitio!!.nombre)
         bundle.putString(getString(R.string.marker_description), sitio.descripcion)
         bundle.putString(getString(R.string.marker_location_key), key)
         bundle.putString(getString(R.string.marker_image), sitio.recursos?.get(0)?.valor)
+        bundle.putDouble(getString(R.string.marker_location_rating), sitio.rating!!)
         //bundle.putString(getString(R.string.marker_description), sitio.descripcion)
         val info = LocationInfoModalSheet()
         info.arguments = bundle

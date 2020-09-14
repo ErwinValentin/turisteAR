@@ -2,13 +2,14 @@ package com.valentingonzalez.turistear.models
 
 class Sitio {
     constructor()
-    constructor(descripcion: String?, latitud: Double?, longitud: Double?, nombre: String?, recursos: List<Recurso>?, tipo: String?) {
+    constructor(descripcion: String?, latitud: Double?, longitud: Double?, nombre: String?, recursos: List<Recurso>?, tipo: String?, rating: Double?) {
         this.descripcion = descripcion
         this.latitud = latitud
         this.longitud = longitud
         this.nombre = nombre
         this.recursos = recursos
         this.tipo = tipo
+        this.rating = rating
     }
 
     var descripcion: String? = null
@@ -17,8 +18,10 @@ class Sitio {
     var nombre: String? = null
     var recursos: List<Recurso>? = null
     var tipo: String? = null
-
+    var rating: Double? = null
     override fun toString(): String {
-        return "Sitio(descripcion=$descripcion, latitud=$latitud, longitud=$longitud, nombre=$nombre, recursos=$recursos, tipo=$tipo)"
+        return "Sitio(descripcion=$descripcion, latitud=$latitud, longitud=$longitud, nombre=$nombre, recursos=$recursos, tipo=$tipo, rating=$rating)"
     }
+
+
 }

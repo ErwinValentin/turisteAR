@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -21,12 +22,13 @@ import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.providers.SiteProvider
 import java.util.ArrayList
 
-class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener{
+
+class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener, SiteProvider.SiteInterface{
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var currentLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var mListener: MarkerClickedListener? = null
-    private var siteProvider: SiteProvider = SiteProvider()
+    private var siteProvider: SiteProvider = SiteProvider(this)
     var marcadores: HashMap<Marker,Sitio> = HashMap()
 
     override fun onAttach(context: Context) {
@@ -66,9 +68,9 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
                 searchAll  = arguments!!.getBoolean("ALL", false)
             }
 
-            val searchDistance = arguments?.getInt("DISTANCE")
-            val searchTypes  = arguments?.getStringArrayList("TYPES")
-            val searchIncludes = arguments?.getString("INCLUDES")
+            val searchDistance = arguments?.getInt("DISTANCE")!!
+            val searchTypes  = arguments?.getStringArrayList("TYPES")!!
+            val searchIncludes = arguments?.getString("INCLUDES")!!
 
             val lastLocation = fusedLocationProviderClient.lastLocation
             lastLocation.addOnSuccessListener { location ->
@@ -78,6 +80,10 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
                     /*TODO pasar seach distance,
                     *  if(searchTypes[0] != "ALL") filtrar marcadores por tipo
                     *  if(searchIncludes != "") filtrar por nombre*/
+//                    Log.d("SEARCHPARAMSALL",searchAll.toString())
+//                    Log.d("SEARCHPARAMSDISTANCE",searchDistance.toString())
+//                    Log.d("SEARCHPARAMSTYPES",searchTypes.toString())
+//                    Log.d("SEARCHPARAMSINCLUDE",searchIncludes+" jpasd")
                     siteProvider.getSites(location.latitude, location.longitude, searchDistance ,searchTypes, searchIncludes, marcadores, mGoogleMap, searchAll)
                 }
             }
@@ -102,5 +108,15 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
     interface MarkerClickedListener {
         fun markerClicked(sitio: Sitio?, key: String)
+    }
+
+    override fun sitesFound(size: Int) {
+        Log.d("TAMANO", size.toString())
+        if(size == 0){
+            Toast.makeText(context, "No sites found, please change parameters", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun typesFound(list: ArrayList<String>) {
     }
 }

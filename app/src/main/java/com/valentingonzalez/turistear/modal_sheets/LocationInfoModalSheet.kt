@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.modal_sheet_v2.*
 import java.util.*
 
 class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.UserSecrets, UserProvider.UserProviderListener{
-    private var siteProvider: SiteProvider = SiteProvider()
+    private var siteProvider: SiteProvider = SiteProvider(null)
     private var userSecretProvider : UserSecretProvider = UserSecretProvider(this)
     private var userProvider: UserProvider = UserProvider(this)
     private var mFirebaseAuth: AuthProvider = AuthProvider()
@@ -40,6 +40,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
     private lateinit var currLocation: String
     private lateinit var nombre: String
     private lateinit var imageSrc: String
+    private var ratingValue: Double = 0.0
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,6 +49,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
         val titleView = layout.findViewById<TextView>(R.id.modal_location_title_tv)
         val descView = layout.findViewById<TextView>(R.id.modal_location_description)
         val showSecrets = layout.findViewById<ImageView>(R.id.show_secrets)
+        val ratingView = layout.findViewById<TextView>(R.id.rating_location_value)
         //val secretsAmount = layout.findViewById<TextView>(R.id.secrets_amount)
         //locationID = b?.getString("location").toString()
         val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
@@ -71,6 +73,10 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
         }
 
         nombre = b.getString(getString(R.string.marker_title))!!
+        Log.d("SITERATINGMODAL", b.getDouble(getString(R.string.marker_location_rating)).toString())
+        val rate = b.getDouble(getString(R.string.marker_location_rating))
+        ratingView.setText("Rating $rate")
+        //rating_location_value.text = "Rating ${b.getDouble(getString(R.string.marker_location_rating))}"
         titleView.text = nombre
         descView.text = b.getString(getString(R.string.marker_description))
         val openCamera: ImageButton = layout.findViewById(R.id.modal_camera_button)

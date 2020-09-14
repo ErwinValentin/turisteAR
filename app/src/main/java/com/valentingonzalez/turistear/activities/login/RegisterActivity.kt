@@ -47,7 +47,6 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 nameTil?.error = ""
             }
-
             override fun afterTextChanged(editable: Editable) {}
         })
         emailTIET?.addTextChangedListener(object : TextWatcher {
@@ -55,7 +54,6 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 emailTil?.error = ""
             }
-
             override fun afterTextChanged(editable: Editable) {}
         })
         passwordTIET?.addTextChangedListener(object : TextWatcher {
@@ -63,13 +61,11 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 passTil?.error = ""
             }
-
             override fun afterTextChanged(editable: Editable) {}
         })
         mCreateButton?.setOnClickListener{ createAccount() }
         progessDialog = SpotsDialog.Builder().setContext(this@RegisterActivity).setMessage("Conectando...").build()
     }
-
     fun createAccount() {
         val name = nameTIET!!.text.toString()
         val email = emailTIET!!.text.toString()
@@ -124,7 +120,6 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
             }
         }
     }
-
     override fun onFavoriteChecked(isFav: List<Boolean>) {
     }
     override fun getUserName(name: String) {

@@ -11,10 +11,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.adapters.LocationTypeAdapter
 import com.valentingonzalez.turistear.includes.BasicToolbar
+import com.valentingonzalez.turistear.providers.SiteProvider
 import kotlinx.android.synthetic.main.search_options_layout.*
+import java.util.ArrayList
 
-class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelected{
-    var selectedTypes = arrayListOf<String>()
+
+class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelected, SiteProvider.SiteInterface{
+    var selectedTypes: ArrayList<String> = arrayListOf()
+    val provider = SiteProvider(this)
+    val allTypes = arrayListOf<String>()
+    lateinit var adapter : LocationTypeAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_options_layout)
@@ -26,8 +32,8 @@ class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelec
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
-        val dummy_types = arrayListOf<String>("Museo", "Zoologico", "Parque")
-        val adapter = LocationTypeAdapter(dummy_types, this)
+        provider.getSitesTypes()
+        adapter = LocationTypeAdapter(allTypes, this)
         val recyclerView = findViewById<RecyclerView>(R.id.location_types_rv)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(this, 2)
@@ -65,6 +71,15 @@ class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelec
         }else{
             selectedTypes.remove(text)
         }
+    }
+
+    override fun sitesFound(size: Int) {
+    }
+
+    override fun typesFound(list: ArrayList<String>) {
+        allTypes.clear()
+        allTypes.addAll(list)
+        adapter.notifyDataSetChanged()
     }
 
 }

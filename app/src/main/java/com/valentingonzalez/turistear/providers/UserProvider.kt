@@ -31,10 +31,10 @@ class UserProvider(private var listener : UserProviderListener) {
     }
     fun addFavorite(favorito : FavoritoUsuario){
         //val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
-        mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos").push().setValue(favorito)
+        mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("favoritos").push().setValue(favorito)
     }
     fun removeFav(location: String, numeroSecreto: Int){
-        mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos")
+        mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("favoritos")
                 .orderByChild("llave").equalTo(location).addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                     }
@@ -51,14 +51,14 @@ class UserProvider(private var listener : UserProviderListener) {
                 })
     }
     fun isFavorite(key: String, numeroSecreto: List<Int>){
-        Log.d("TEST",FirebaseAuth.getInstance().uid.toString())
-        mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos")
+//        Log.d("TEST",FirebaseAuth.getInstance().uid.toString())
+        mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("favoritos")
                 .orderByChild("llave").equalTo(key).addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {
                     }
 
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        Log.d("TEST",snapshot.toString())
+//                        Log.d("TEST",snapshot.toString())
                         var favorites = mutableListOf(false)
                         if(numeroSecreto[0]!=-1){
                             favorites = mutableListOf(false, false, false)
@@ -82,6 +82,9 @@ class UserProvider(private var listener : UserProviderListener) {
                 })
     }
 
+    fun getUserLevel(uId: String){
+
+    }
     interface UserProviderListener {
         fun onFavoriteChecked(isFav : List<Boolean>)
         fun getUserName(name: String)

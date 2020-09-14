@@ -20,7 +20,7 @@ import com.valentingonzalez.turistear.includes.BasicToolbar.show
 class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, UserProvider.UserProviderListener, UserSecretProvider.UserSecrets{
 
     private val secretProvider: SecretProvider = SecretProvider(this)
-    private var siteProvider: SiteProvider = SiteProvider()
+    private var siteProvider: SiteProvider = SiteProvider(null)
     private val userSecretProvider: UserSecretProvider = UserSecretProvider(this)
     private val userProvider: UserProvider = UserProvider(this)
     private var mFirebaseAuth: AuthProvider = AuthProvider()

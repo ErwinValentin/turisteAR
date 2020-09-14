@@ -70,7 +70,7 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
             if(it.tag==0){
                 holder.secretFavorite.setImageResource(R.drawable.ic_favorite_red_400_24dp)
                 it.tag = 1
-                val fav = FavoritoUsuario(currLocation, currentItem.nombre, position, Calendar.getInstance().time.toString())
+                val fav = FavoritoUsuario(currLocation, currentItem.nombre,position ,Calendar.getInstance().time.toString())
                 userProvider.addFavorite(fav)
 
             }else{
