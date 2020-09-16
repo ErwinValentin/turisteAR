@@ -13,9 +13,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import com.valentingonzalez.turistear.R
-import com.valentingonzalez.turistear.activities.CommentActivity
-import com.valentingonzalez.turistear.activities.SecretDetailActivity
-import com.valentingonzalez.turistear.activities.ShareGalleryActivity
+import com.valentingonzalez.turistear.activities.maps.CommentActivity
+import com.valentingonzalez.turistear.activities.maps.SecretDetailActivity
+import com.valentingonzalez.turistear.activities.maps.ShareGalleryActivity
 import com.valentingonzalez.turistear.activities.camera.ARCameraActivity
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Usuario
@@ -23,7 +23,6 @@ import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
 import com.valentingonzalez.turistear.providers.UserSecretProvider
-import kotlinx.android.synthetic.main.modal_sheet_v2.*
 import java.util.*
 import kotlin.collections.HashMap
 

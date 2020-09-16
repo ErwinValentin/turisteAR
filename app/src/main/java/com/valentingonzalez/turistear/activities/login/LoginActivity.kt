@@ -11,7 +11,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.valentingonzalez.turistear.R
-import com.valentingonzalez.turistear.activities.MapsActivity
+import com.valentingonzalez.turistear.activities.maps.MapsActivity
 import com.valentingonzalez.turistear.providers.AuthProvider
 import dmax.dialog.SpotsDialog
 

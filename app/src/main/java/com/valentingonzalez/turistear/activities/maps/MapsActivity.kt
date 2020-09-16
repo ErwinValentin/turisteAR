@@ -1,7 +1,8 @@
-package com.valentingonzalez.turistear.activities
+package com.valentingonzalez.turistear.activities.maps
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -26,8 +27,8 @@ import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
 import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.models.Usuario
 import com.valentingonzalez.turistear.providers.UserProvider
+import dmax.dialog.SpotsDialog
 import java.util.ArrayList
-import kotlin.collections.HashMap
 
 class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener, UserProvider.UserProviderListener {
 
@@ -39,6 +40,8 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     private lateinit var levelProgressBar: ProgressBar
     private lateinit var currentLevel: TextView
     private lateinit var levelProgressText: TextView
+    private lateinit var userName: TextView
+    private lateinit var userPoints: TextView
 
     private var userProvider = UserProvider(this)
     private var searchDistance = 0.03
@@ -46,34 +49,33 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     private var searchIncludes = ""
     private var searchALL = false
 
+    var progessDialog: AlertDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        //TODO update toolbar level and remaining points
         userProvider.getUser()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         drawerLayout = findViewById(R.id.maps_activity_drawer)
         actionbarToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer)
-
         drawerLayout.addDrawerListener(actionbarToggle)
         actionbarToggle.syncState()
-
         navView = findViewById(R.id.maps_navigation_view)
         navView.setNavigationItemSelectedListener(this)
-        //testCreateSitio()
-
         accountIcon = findViewById(R.id.toolbar_account_icon)
         accountIcon.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
         searchIcon = findViewById(R.id.toolbar_search_icon)
         searchIcon.setOnClickListener {
-//            searchALL = !searchALL
-//            loadMap()
             startActivityForResult(Intent(this, SearchOptionsActivity::class.java), SEARCH_ACTIVITY_REQUEST)
         }
         levelProgressBar = findViewById(R.id.level_progress_bar)
         currentLevel = findViewById(R.id.level_view)
         levelProgressText = findViewById(R.id.level_progress_text)
+        userName = navView.getHeaderView(0).findViewById(R.id.nav_drawer_user_name)
+        userPoints = navView.getHeaderView(0).findViewById(R.id.nav_drawer_user_current_points)
+        progessDialog = SpotsDialog.Builder().setContext(this).setMessage("Conectando...").build()
+        progessDialog!!.show()
         userProvider.getUser()
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if(allPermisionsGranted()){
@@ -81,7 +83,6 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
-
     }
 
 //    private fun testCreateSitio() {
@@ -180,6 +181,9 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
             R.id.nav_menu_visited->{
                 Toast.makeText(this, "Clicked on Visited", Toast.LENGTH_SHORT).show()
             }
+            R.id.nav_menu_shop ->{
+                Toast.makeText(this, "Tienda proximamente", Toast.LENGTH_SHORT).show()
+            }
             R.id.nav_menu_settings->{
                 Toast.makeText(this, "Clicked on Settings", Toast.LENGTH_SHORT).show()
             }
@@ -196,5 +200,8 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         val toNextLevel = user.puntosTotales!!.rem(100)
         levelProgressBar.progress = toNextLevel
         levelProgressText.text = getString(R.string.proximo_nivel_en, 100 - toNextLevel)
+        userName.text = user.nombre
+        userPoints.text = getString(R.string.puntos_usuario, user.puntosActuales)
+        progessDialog!!.dismiss()
     }
 }

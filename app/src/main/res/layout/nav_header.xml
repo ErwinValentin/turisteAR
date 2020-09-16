@@ -6,14 +6,25 @@
     android:gravity="center"
     android:background="@color/colorPrimaryDark">
     <ImageView
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="4dp"
-        android:background="@drawable/ic_account_circle_black_24dp"/>
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/ic_account_circle_white_24dp"/>
 <TextView
     android:layout_width="0dp"
     android:textColor="#fff"
     android:layout_height="wrap_content"
     android:text="Cuenta de Usuario"
+    android:singleLine="true"
+    android:marqueeRepeatLimit="marquee_forever"
+    android:scrollHorizontally="true"
+    android:id="@+id/nav_drawer_user_name"
     android:layout_weight="5"/>
+    <TextView
+        android:layout_width="0dp"
+        android:textColor="#fff"
+        android:layout_height="wrap_content"
+        android:text="@string/puntos_usuario"
+        android:id="@+id/nav_drawer_user_current_points"
+        android:layout_weight="5"/>
 </LinearLayout>

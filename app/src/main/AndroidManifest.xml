@@ -46,7 +46,7 @@
             />
 
         <activity
-            android:name=".activities.MapsActivity"
+            android:name=".activities.maps.MapsActivity"
             android:label="@string/title_activity_maps">
         </activity>
         <activity
@@ -64,12 +64,12 @@
             android:parentActivityName=".activities.login.LoginActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activities.camera.ARCameraActivity" />
-        <activity android:name=".activities.SecretDetailActivity"
-            android:parentActivityName=".activities.MapsActivity"/>
-        <activity android:name=".activities.CommentActivity"
-            android:parentActivityName=".activities.MapsActivity"/>
-        <activity android:name=".activities.ShareGalleryActivity"
-            android:parentActivityName=".activities.MapsActivity">
+        <activity android:name=".activities.maps.SecretDetailActivity"
+            android:parentActivityName=".activities.maps.MapsActivity"/>
+        <activity android:name=".activities.maps.CommentActivity"
+            android:parentActivityName=".activities.maps.MapsActivity"/>
+        <activity android:name=".activities.maps.ShareGalleryActivity"
+            android:parentActivityName=".activities.maps.MapsActivity">
             <intent-filter>
                 <action
                     android:name="android.intent.action.PICK"/>
@@ -81,10 +81,11 @@
                 <data android:mimeType="image/*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SearchOptionsActivity"
-            android:parentActivityName=".activities.MapsActivity"
+        <activity android:name=".activities.maps.SearchOptionsActivity"
+            android:parentActivityName=".activities.maps.MapsActivity"
             android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".activities.camera.QRCameraActivity" />
+        <activity android:name=".activities.history.UserFavorites" />
 
     </application>
 

@@ -1,4 +1,4 @@
-package com.valentingonzalez.turistear.activities
+package com.valentingonzalez.turistear.activities.maps
 
 import android.os.Bundle
 import android.view.Menu

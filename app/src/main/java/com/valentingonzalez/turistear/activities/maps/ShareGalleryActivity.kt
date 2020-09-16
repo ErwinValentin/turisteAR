@@ -1,11 +1,8 @@
-package com.valentingonzalez.turistear.activities
+package com.valentingonzalez.turistear.activities.maps
 
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView

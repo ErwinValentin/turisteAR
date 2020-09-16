@@ -61,7 +61,7 @@
                 android:id="@+id/level_progress_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/proximo_nivel_en"
+                android:text="@string/proximo_nivel_display_loading"
                 android:textColor="#fff"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline9"

@@ -9,6 +9,9 @@
         <item android:id="@+id/nav_menu_visited"
             android:icon="@drawable/ic_location_on_black_24dp"
             android:title="Sitios Visitados"/>
+        <item android:id="@+id/nav_menu_shop"
+            android:icon="@drawable/ic_shopping_cart_black_24dp"
+            android:title="Visitar tienda de puntos"/>
     </group>
     <group android:id="@+id/settings">
         <item android:id="@+id/nav_menu_settings"

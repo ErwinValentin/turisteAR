@@ -1,10 +1,9 @@
-package com.valentingonzalez.turistear.activities
+package com.valentingonzalez.turistear.activities.maps
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView

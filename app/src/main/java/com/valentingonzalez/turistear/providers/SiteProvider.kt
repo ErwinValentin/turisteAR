@@ -21,6 +21,7 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
     private var mSiteReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Sitios")
     private var mSecretReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Secretos")
     private var mUserReference = FirebaseDatabase.getInstance().reference.child("Usuarios")
+    private var mUserSecretReference = FirebaseDatabase.getInstance().reference.child("SecretosUsuario")
     private var mDiscoveredSiteReference = FirebaseDatabase.getInstance().reference.child("DiscoveredSites")
 
     fun createSite(sitio: Sitio, secrets: List<Secreto>): Task<Void> {
@@ -224,6 +225,8 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.value == null){
+                    val siteSecrets = arrayListOf<Boolean>(false, false, false)
+                    mUserSecretReference.child(uId).child(siteId).setValue(siteSecrets)
                     mDiscoveredSiteReference.child(uId).child(siteId).setValue(sitioDescubierto)
                     Log.d("EXITO", "exito al agregar un sitio")
                     mUserReference.child(uId).addListenerForSingleValueEvent(object : ValueEventListener{

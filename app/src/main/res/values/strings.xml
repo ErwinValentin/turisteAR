@@ -35,4 +35,6 @@
     <string name="review_dialog_prompt">¿Qué opinas sobre este sitio?</string>
     <string name="image_src_personal">Personal</string>
     <string name="proximo_nivel_en">Proximo nivel en: %1$d pts</string>
+    <string name="puntos_usuario">Puntos: %1$d</string>
+    <string name="proximo_nivel_display_loading">Proximo nivel en: 100 pts</string>
 </resources>
