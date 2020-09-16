@@ -10,6 +10,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
 import com.valentingonzalez.turistear.models.Secreto
 import com.valentingonzalez.turistear.models.Sitio
+import com.valentingonzalez.turistear.models.SitioDescubierto
+import com.valentingonzalez.turistear.models.Usuario
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -18,6 +20,8 @@ import kotlin.collections.HashMap
 class SiteProvider(@Nullable var listener: SiteInterface?){
     private var mSiteReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Sitios")
     private var mSecretReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Secretos")
+    private var mUserReference = FirebaseDatabase.getInstance().reference.child("Usuarios")
+    private var mDiscoveredSiteReference = FirebaseDatabase.getInstance().reference.child("DiscoveredSites")
 
     fun createSite(sitio: Sitio, secrets: List<Secreto>): Task<Void> {
         val key = mSiteReference.push().key!!
@@ -162,10 +166,8 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         })
     }
     fun getSitesByDistanceAndType(latitude: Double, longitud: Double, distancia: Int, tipos: ArrayList<String>, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
-        TODO()
     }
     fun getSitesByDistanceAndTitle(latitude: Double, longitud: Double, distancia: Int, titulo: String , marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
-        TODO()
     }
     fun getSitesByTypeAndTitle(latitude: Double, longitud: Double, tipos: ArrayList<String>, titulo: String, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
         mSiteReference.addListenerForSingleValueEvent(object : ValueEventListener{
@@ -192,7 +194,6 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         })
     }
     fun getSitesWithAllConditions(latitude: Double, longitud: Double, distancia: Int, tipos: ArrayList<String>, titulo: String, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
-        TODO()
     }
 
     fun getSitesTypes(){
@@ -213,6 +214,37 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         })
     }
 
+    fun addSiteToDiscovered(siteId: String, uId: String, nombre: String, fecha: String, esSitio: Boolean){
+        val sitioDescubierto = SitioDescubierto(fecha, nombre)
+        Log.d("USERID", uId)
+
+        mDiscoveredSiteReference.child(uId).child(siteId).addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.value == null){
+                    mDiscoveredSiteReference.child(uId).child(siteId).setValue(sitioDescubierto)
+                    Log.d("EXITO", "exito al agregar un sitio")
+                    mUserReference.child(uId).addListenerForSingleValueEvent(object : ValueEventListener{
+                        override fun onCancelled(error: DatabaseError) {
+                        }
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            var user = snapshot.getValue(Usuario::class.java)!!
+                            Log.d("PUNTOS", "agregando puntos al usuario ${user.nombre}")
+                            user.puntosActuales = user.puntosActuales?.plus(15)
+                            user.puntosTotales = user.puntosTotales?.plus(15)
+                            if(user.puntosTotales?.rem(100)  == 0){
+                                user.nivelActual = user.nivelActual?.plus(1)
+                            }
+                            mUserReference.child(uId).setValue(user)
+                        }
+                    })
+                }
+            }
+
+        })
+    }
     interface SiteInterface{
         fun sitesFound(size : Int)
         fun typesFound(list : ArrayList<String>)

@@ -17,8 +17,10 @@ import com.valentingonzalez.turistear.models.Secreto
 import com.valentingonzalez.turistear.providers.UserProvider
 import kotlinx.android.synthetic.main.secret_detail_item.view.*
 import java.util.*
+import kotlin.collections.HashMap
 
-class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtained: List<Boolean>, private val favorites: List<Boolean>, private val currLocation: String, private val userProvider: UserProvider) : Adapter<SecretDetailAdapter.ViewHolder>(){
+
+class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtained: HashMap<Int, Boolean>, private val favorites: List<Boolean>, private val currLocation: String, private val userProvider: UserProvider) : Adapter<SecretDetailAdapter.ViewHolder>(){
 
     class ViewHolder (view: View): RecyclerView.ViewHolder(view){
         val secretTitle : TextView = view.secret1_title
@@ -44,11 +46,11 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
         val isFav = favorites[position]
 
         val fbStorage = FirebaseStorage.getInstance().reference
-        val path = fbStorage.child("$currLocation/secrets/${currentItem.recursos!![0].valor}").downloadUrl.addOnSuccessListener {
+        fbStorage.child("$currLocation/secrets/${currentItem.recursos!![0].valor}").downloadUrl.addOnSuccessListener {
             Picasso.get().load(it).placeholder(R.drawable.landscape_sample).into(holder.secretMainImage)
         }
         holder.secretTitle.isSelected = true
-        if(currentObtained) {
+        if(currentObtained==true) {
             holder.secretObtainedIcon.setImageResource(R.drawable.open_chest_v2_m)
             holder.secretTitle.text = currentItem.nombre
             holder.secretDescription.text = currentItem.descripcion

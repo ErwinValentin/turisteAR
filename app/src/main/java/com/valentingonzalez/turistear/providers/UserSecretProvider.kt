@@ -2,7 +2,10 @@ package com.valentingonzalez.turistear.providers
 
 import android.util.Log
 import com.google.firebase.database.*
+import com.valentingonzalez.turistear.models.SitioDescubierto
 import com.valentingonzalez.turistear.models.Usuario
+import java.util.*
+import kotlin.collections.HashMap
 
 class UserSecretProvider (private var listener: UserSecrets){
     private var mUserSecretReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("SecretosUsuario")
@@ -12,13 +15,11 @@ class UserSecretProvider (private var listener: UserSecrets){
         mUserSecretReference.child(uId).child(siteId).addValueEventListener(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) { }
             override fun onDataChange(snapshot: DataSnapshot) {
-                val obtained = mutableListOf<Boolean>()
+                val obtained = hashMapOf<Int, Boolean>()
                 for(user_count in snapshot.children){
                     Log.d("USER_SECRET", user_count.value.toString())
-                    if(user_count.value == true) {
-                        obtained.add(true)
-                    }else{
-                        obtained.add(false)
+                    if(user_count.value !=false) {
+                        obtained[user_count.key!!.toInt()] = true
                     }
                 }
                 listener.onSiteDiscoveredStatus(obtained)
@@ -26,29 +27,30 @@ class UserSecretProvider (private var listener: UserSecrets){
         })
     }
 
-    fun addSecretToDiscovered(uId: String, siteKey: String, secretNumber: Int){
+    fun addSecretToDiscovered(uId: String, siteKey: String, secretNumber: Int, secretName: String){
+        val sitioDescubierto = SitioDescubierto(Calendar.getInstance().time.toString(), secretName)
         mUserSecretReference.child(uId).child(siteKey).child(secretNumber.toString()).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                val estado = snapshot.value as Boolean
-                if(!estado){
-                    mUserSecretReference.child(uId).child(siteKey).child(secretNumber.toString()).setValue(true).addOnSuccessListener {
+                Log.d("UPDATE SECRETE",snapshot.value.toString())
+                if(snapshot.value == false){
+                    mUserSecretReference.child(uId).child(siteKey).child(secretNumber.toString()).setValue(sitioDescubierto).addOnSuccessListener {
                         listener.onSecretDiscovered()
-                        mUserReference.child(uId).addValueEventListener(object : ValueEventListener{
+                        mUserReference.child(uId).addListenerForSingleValueEvent(object : ValueEventListener{
                             override fun onCancelled(error: DatabaseError) {
                             }
                             override fun onDataChange(snapshot: DataSnapshot) {
 
-                                var user = snapshot.getValue(Usuario::class.java)!!
+                                val user = snapshot.getValue(Usuario::class.java)!!
 
                                 user.puntosActuales = user.puntosActuales?.plus(10)
                                 user.puntosTotales = user.puntosTotales?.plus(10)
                                 if(user.puntosTotales?.rem(100)  == 0){
                                     user.nivelActual = user.nivelActual?.plus(1)
-                                    mUserReference.child(uId).setValue(user)
                                 }
+                                mUserReference.child(uId).setValue(user)
                             }
                         })
                     }
@@ -59,7 +61,7 @@ class UserSecretProvider (private var listener: UserSecrets){
     }
 
     interface UserSecrets{
-        fun onSiteDiscoveredStatus(obtained: List<Boolean>)
+        fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>)
         fun onSecretDiscovered()
     }
 }

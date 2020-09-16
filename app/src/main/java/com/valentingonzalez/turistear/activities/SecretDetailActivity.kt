@@ -26,7 +26,7 @@ class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, Us
     private val userProvider: UserProvider = UserProvider(this)
     private var mFirebaseAuth: AuthProvider = AuthProvider()
     private lateinit var currLocation: String
-    private lateinit var obtainedList: List<Boolean>
+    private lateinit var obtainedList: HashMap<Int, Boolean>
     private lateinit var siteSecretsList: List<Secreto>
     private lateinit var secretsRecyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +59,8 @@ class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, Us
     override fun getUserName(user: Usuario) {
     }
 
-    override fun onSiteDiscoveredStatus(obtained: List<Boolean>) {
-        obtainedList = obtained
+    override fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>) {
+        obtainedList = HashMap(obtained)
         secretProvider.getSecrets(currLocation)
     }
 

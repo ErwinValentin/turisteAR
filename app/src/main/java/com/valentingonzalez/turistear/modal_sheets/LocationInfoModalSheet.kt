@@ -25,6 +25,7 @@ import com.valentingonzalez.turistear.providers.UserProvider
 import com.valentingonzalez.turistear.providers.UserSecretProvider
 import kotlinx.android.synthetic.main.modal_sheet_v2.*
 import java.util.*
+import kotlin.collections.HashMap
 
 class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.UserSecrets, UserProvider.UserProviderListener{
     private var siteProvider: SiteProvider = SiteProvider(null)
@@ -37,11 +38,13 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
     private lateinit var shareButton: ImageButton
     private lateinit var favoriteLocation: ImageButton
     private lateinit var ratingsButton : ImageButton
+    private lateinit var secretAmountText: TextView
 
     private lateinit var currLocation: String
     private lateinit var nombre: String
     private lateinit var imageSrc: String
     private var ratingValue: Double = 0.0
+
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,6 +54,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
         val descView = layout.findViewById<TextView>(R.id.modal_location_description)
         val showSecrets = layout.findViewById<ImageView>(R.id.show_secrets)
         val ratingView = layout.findViewById<TextView>(R.id.rating_location_value)
+        secretAmountText = layout.findViewById(R.id.secrets_amount)
         //val secretsAmount = layout.findViewById<TextView>(R.id.secrets_amount)
         //locationID = b?.getString("location").toString()
         val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
@@ -170,9 +174,14 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
     override fun getUserName(user: Usuario) {
     }
 
-    override fun onSiteDiscoveredStatus(obtained: List<Boolean>) {
-        val count = obtained.count{ it }
-        secrets_amount.text = "$count/3"
+    override fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>) {
+        var count = 0
+        for(v in obtained){
+            if(v.value){
+                count++
+            }
+        }
+        secretAmountText.text = "$count/3"
     }
 
     override fun onSecretDiscovered() {

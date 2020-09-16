@@ -18,9 +18,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.providers.SiteProvider
-import java.util.ArrayList
+import java.util.*
+import kotlin.collections.HashMap
 
 
 class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener, SiteProvider.SiteInterface{
@@ -30,6 +32,8 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     private var mListener: MarkerClickedListener? = null
     private var siteProvider: SiteProvider = SiteProvider(this)
     var marcadores: HashMap<Marker,Sitio> = HashMap()
+    val userId = FirebaseAuth.getInstance().uid!!
+
 
     override fun onAttach(context: Context) {
         //TODO receive marker options and display the correct markers
@@ -102,7 +106,14 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 //    }
 
     override fun onMarkerClick(marker: Marker): Boolean {
+        val loc: Location = Location("")
+        loc.longitude = marker.position.longitude
+        loc.latitude = marker.position.latitude
+        Log.d("DISTANCIA",currentLocation.distanceTo(loc).toString())
         mListener!!.markerClicked(marcadores[marker], marker.tag.toString())
+        if((currentLocation.distanceTo(loc))<100){
+            siteProvider.addSiteToDiscovered(marker.tag.toString(), userId, marker.title, Calendar.getInstance().time.toString(), true)
+        }
         return false
     }
 

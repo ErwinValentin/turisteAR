@@ -2,6 +2,7 @@ package com.valentingonzalez.turistear.activities.camera
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,10 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -27,29 +32,42 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.collections.HashMap
 
-class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets {
+class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, SecretProvider.SiteSecrets {
     private var imageCapture: ImageCapture? = null
     private lateinit var imageAnalyzer: ImageAnalysis
     private lateinit var outputDir: File
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var currLocation: String
+    private lateinit var markerLocation: String
+    private lateinit var currentLocation: Location
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     private val userSecretProvider = UserSecretProvider(this)
+    private val secretProvider = SecretProvider(this)
     private var listaLlaves = mutableListOf<String>()
-    private var listaDescubiertos = mutableListOf<Boolean>()
+    private lateinit var listaDescubiertos: HashMap<Int, Boolean>
+    private var listaSecretos = mutableListOf<Secreto>()
     private val uId = FirebaseAuth.getInstance().uid.toString()
-//    private val secretProvider: SecretProvider = SecretProvider(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_ar_layout)
-
-        currLocation = intent.getStringExtra(getString(R.string.marker_location_key))!!
-        for (i in 0..2) {
-            listaLlaves.add(currLocation + i)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        val lastLocation = fusedLocationProviderClient.lastLocation
+        lastLocation.addOnSuccessListener { location ->
+            if(location != null){
+                currentLocation =location
+            }
         }
 
-        userSecretProvider.getSiteDiscoveredSecrets(uId, currLocation)
+        markerLocation = intent.getStringExtra(getString(R.string.marker_location_key))!!
+        for (i in 0..2) {
+            listaLlaves.add(markerLocation + i)
+        }
+
+        secretProvider.getSecrets(markerLocation)
+        userSecretProvider.getSiteDiscoveredSecrets(uId, markerLocation)
 //        secretProvider.getSecretKeys(currLocation)
         if (allPermissionsGranted()) {
             startCamera()
@@ -74,11 +92,22 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets {
                         Log.d("LISTA CONTIENE", listaLlaves.contains(it).toString())
                         if (listaLlaves.contains(it)) {
                             var numero = it.substring(it.length - 1).toInt()
-                            if (listaDescubiertos[numero]) {
+                            Log.d("MAPA DESCUBIERTOS", listaDescubiertos.toString())
+                            Log.d("MAPA DESCUBIERTOS", listaDescubiertos[numero].toString())
+                            if (listaDescubiertos[numero]!= null) {
                                 Toast.makeText(this, "Ya has descubierto este secreto", Toast.LENGTH_SHORT).show()
                             } else {
-                                //TODO check for physical proximity
-                                userSecretProvider.addSecretToDiscovered(uId, currLocation, numero)
+                                Log.d("SITIO NO DESCUBIERTO", "entramos aca")
+                                val secreto = listaSecretos[numero]
+                                Log.d("SECRETO", secreto.toString())
+                                val loc = Location("")
+                                loc.latitude = secreto.latitud!!
+                                loc.longitude = secreto.longitud!!
+                                if(loc.distanceTo(currentLocation)<50){
+                                    userSecretProvider.addSecretToDiscovered(uId, markerLocation, numero, listaSecretos[numero].nombre.toString())
+                                }else{
+                                    Toast.makeText(this, "Este secreto esta muy lejos", Toast.LENGTH_SHORT).show()
+                                }
                             }
 
                         } else {
@@ -92,13 +121,8 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets {
                 imageAnalyzer.clearAnalyzer()
             }
         }
-        outputDir = File(applicationContext.getExternalFilesDir(null).toString() + "/TouristeAR/" + currLocation)
+        outputDir = File(applicationContext.getExternalFilesDir(null).toString() + "/TouristeAR/" + markerLocation)
         cameraExecutor = Executors.newSingleThreadExecutor()
-    }
-
-    private fun scanCode() {
-        val imageAnalyzer = imageAnalyzer ?: return
-
     }
 
     private fun takePhoto() {
@@ -120,7 +144,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets {
             }
 
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                val saverUri = Uri.fromFile(photoFile)
+                //val saverUri = Uri.fromFile(photoFile)
                 val msg = "Foto tomada exitosamente, guardando en linea..."
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
 //                Log.d(TAG, msg)
@@ -138,7 +162,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets {
             contentType = "image/jpg"
         }
         val photoRef = storageRef.child(FirebaseAuth.getInstance().uid.toString())
-                .child(currLocation).child(file.lastPathSegment.toString())
+                .child(markerLocation).child(file.lastPathSegment.toString())
 
         val uploadTask = photoRef.putFile(file, metadata)
 
@@ -219,11 +243,15 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
-    override fun onSiteDiscoveredStatus(obtained: List<Boolean>) {
-        listaDescubiertos.addAll(obtained)
+    override fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>) {
+        listaDescubiertos = HashMap(obtained)
     }
 
     override fun onSecretDiscovered() {
         Toast.makeText(this, "Encontraste un Secreto", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onSecretDiscovered(secretList: List<Secreto>) {
+        listaSecretos.addAll(secretList)
     }
 }
