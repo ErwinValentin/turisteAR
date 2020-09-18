@@ -12,8 +12,11 @@ class UserProvider(private var listener : UserProviderListener) {
     var mUserReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Usuarios")
     fun createUser(usuario: Usuario): Task<Void> {
         val map: MutableMap<String, Any?> = HashMap()
-        map["name"] = usuario.nombre
+        map["nombre"] = usuario.nombre
         map["email"] = usuario.email
+        map["puntosActuales"] = 0
+        map["puntosTotales"] = 0
+        map["nivelActual"] = 1
         return mUserReference.child(usuario.id!!).setValue(map)
     }
 
@@ -44,7 +47,7 @@ class UserProvider(private var listener : UserProviderListener) {
                             val f = fav.getValue(FavoritoUsuario::class.java)
                             val num = f?.numSecreto!!
                             if(numeroSecreto  == num) {
-                                mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("Favoritos").child(fav.key!!).removeValue()
+                                mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("favoritos").child(fav.key!!).removeValue()
                             }
                         }
                     }

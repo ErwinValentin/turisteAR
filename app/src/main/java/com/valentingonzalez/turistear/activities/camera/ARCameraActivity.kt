@@ -17,6 +17,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -78,7 +79,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         camera_capture_button.setOnClickListener { takePhoto() }
         var scan = false
         var scannedCode = ""
-        qr_scan_button.setOnClickListener {
+        qr_scan_button.setOnClickListener { button ->
 //            val intent = Intent(this, QRCameraActivity::class.java)
 //            intent.putExtra(getString(R.string.marker_location_key), currLocation)
 //            startActivity(intent)
@@ -92,14 +93,10 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
                         Log.d("LISTA CONTIENE", listaLlaves.contains(it).toString())
                         if (listaLlaves.contains(it)) {
                             var numero = it.substring(it.length - 1).toInt()
-                            Log.d("MAPA DESCUBIERTOS", listaDescubiertos.toString())
-                            Log.d("MAPA DESCUBIERTOS", listaDescubiertos[numero].toString())
                             if (listaDescubiertos[numero]!= null) {
                                 Toast.makeText(this, "Ya has descubierto este secreto", Toast.LENGTH_SHORT).show()
                             } else {
-                                Log.d("SITIO NO DESCUBIERTO", "entramos aca")
                                 val secreto = listaSecretos[numero]
-                                Log.d("SECRETO", secreto.toString())
                                 val loc = Location("")
                                 loc.latitude = secreto.latitud!!
                                 loc.longitude = secreto.longitud!!
@@ -248,7 +245,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
     }
 
     override fun onSecretDiscovered() {
-        Toast.makeText(this, "Encontraste un Secreto", Toast.LENGTH_SHORT).show()
+        Snackbar.make(qr_scan_button , "¡Has descubierto un secreto!", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onSecretDiscovered(secretList: List<Secreto>) {

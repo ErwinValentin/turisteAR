@@ -25,7 +25,7 @@ class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelec
         setContentView(R.layout.search_options_layout)
         search_confirm_button.setOnClickListener{
             val intent = Intent()
-            intent.putExtra("DISTANCE", search_distance_bar.progress)
+            intent.putExtra("DISTANCE", search_distance_bar.progress/10.0)
             intent.putStringArrayListExtra("TYPES",selectedTypes)
             intent.putExtra("CONTAINS",search_text_tiet.text.toString())
             setResult(Activity.RESULT_OK, intent)
@@ -39,17 +39,10 @@ class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelec
         BasicToolbar.show(this, "Opciones de busqueda", true)
         search_distance_bar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                when{
-                    p1 == 0->{
-                        search_distance_value.text = "Distancia : 1 m"
-                    }
-                    p1 == 100->{
-                        search_distance_value.text = "Distancia : 1 km"
-                    }
-                    else ->{
-                        search_distance_value.text = "Distancia : ${p1 * 10} m"
-                    }
-
+                if(p1 < 10){
+                    search_distance_value.text = "Distancia : ${p1 * 100} m"
+                }else{
+                    search_distance_value.text = String.format("Distancia %.2f km", (p1* 0.1))
                 }
             }
 

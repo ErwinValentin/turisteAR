@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.fragments.MapFragment
@@ -44,7 +45,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     private lateinit var userPoints: TextView
 
     private var userProvider = UserProvider(this)
-    private var searchDistance = 0.03
+    private var searchDistance = 0.01
     private var searchTypes = ArrayList<String>(listOf())
     private var searchIncludes = ""
     private var searchALL = false
@@ -137,7 +138,8 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
             searchTypes.clear()
             searchTypes = data.getStringArrayListExtra("TYPES")!!
             searchIncludes = data.getStringExtra("CONTAINS")!!
-            Log.d("DISTANCE", data.getIntExtra("DISTANCE", 0).toString())
+            //searchDistance = data.getDoubleExtra("DISTANCE", 0.0)
+            Log.d("DISTANCE", data.getDoubleExtra("DISTANCE", 0.0).toString())
             Log.d("TYPES", data.getStringArrayListExtra("TYPES")!!.toString())
             Log.d("CONTAINS", data.getStringExtra("CONTAINS")!!.toString())
             loadMap()

@@ -113,6 +113,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
         mListener!!.markerClicked(marcadores[marker], marker.tag.toString())
         if((currentLocation.distanceTo(loc))<100){
             siteProvider.addSiteToDiscovered(marker.tag.toString(), userId, marker.title, Calendar.getInstance().time.toString(), true)
+            Toast.makeText(context,  "¡Has descubierto un sitio nuevo!", Toast.LENGTH_SHORT).show()
         }
         return false
     }
@@ -122,7 +123,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     }
 
     override fun sitesFound(size: Int) {
-        Log.d("TAMANO", size.toString())
+
         if(size == 0){
             Toast.makeText(context, "No sites found, please change parameters", Toast.LENGTH_SHORT).show()
         }

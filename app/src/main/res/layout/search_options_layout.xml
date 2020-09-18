@@ -41,7 +41,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Distancia 100 m"
+        android:text="Distancia 1.00 km"
         android:textAlignment="center"
         android:id="@+id/search_distance_value"
         android:layout_marginStart="5dp"
