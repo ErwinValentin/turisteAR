@@ -36,7 +36,7 @@ class UserProvider(private var listener : UserProviderListener) {
         //val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
         mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("favoritos").push().setValue(favorito)
     }
-    fun removeFav(location: String, numeroSecreto: Int){
+    fun removeFav(location: String?, numeroSecreto: Int?){
         mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("favoritos")
                 .orderByChild("llave").equalTo(location).addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
@@ -50,6 +50,21 @@ class UserProvider(private var listener : UserProviderListener) {
                                 mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("favoritos").child(fav.key!!).removeValue()
                             }
                         }
+                    }
+                })
+    }
+
+    fun getFavorites(){
+        mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("favoritos")
+                .addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val favoritos = mutableListOf<FavoritoUsuario>()
+                        for(fav in snapshot.children){
+                            fav.getValue(FavoritoUsuario::class.java)?.let { favoritos.add(it) }
+                        }
+                        listener.getAllFavorites(favoritos)
                     }
                 })
     }
@@ -87,5 +102,6 @@ class UserProvider(private var listener : UserProviderListener) {
     interface UserProviderListener {
         fun onFavoriteChecked(isFav : List<Boolean>)
         fun getUserName(user: Usuario)
+        fun getAllFavorites(favoritos: List<FavoritoUsuario>)
     }
 }

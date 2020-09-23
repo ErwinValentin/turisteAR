@@ -1,5 +1,6 @@
 package com.valentingonzalez.turistear.providers
 
+import android.renderscript.Sampler
 import android.util.Log
 import androidx.annotation.Nullable
 import com.google.android.gms.maps.GoogleMap
@@ -29,6 +30,19 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         mSecretReference.child(key).setValue(secrets)
         return mSiteReference.child(key).setValue(sitio)
     }
+    fun getSite(key: String){
+        mSiteReference.child(key).addListenerForSingleValueEvent( object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val sitio = snapshot.getValue(Sitio::class.java)
+                Log.d("SITIO", sitio.toString())
+                listener!!.getSingleSite(sitio!!, key)
+            }
+
+        })
+    }
     fun getSites(latitud: Double, longitud: Double, distancia: Int, tipos: ArrayList<String>, titleContains: String,markers: HashMap<Marker, Sitio>, map: GoogleMap, all: Boolean ){
         if(all || (distancia== 0 && tipos.size == 0 && titleContains.isEmpty())){
             getAllSites(markers, map)
@@ -36,7 +50,7 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         }else{
             if(distancia!= 0 && tipos.size == 0 && titleContains.isEmpty()){
                 getNearbySites(latitud, longitud, distancia ,markers, map)
-                Log.d("SITEPROVIDER", "CALLED getAll")
+                Log.d("SITEPROVIDER", "CALLED getNearby")
                 return
             }
             if(distancia== 0 && tipos.size != 0 && titleContains.isEmpty()) {
@@ -94,8 +108,12 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         })
     }
     fun getNearbySites(latitude: Double, longitud: Double,distancia: Int, marcadores: HashMap<Marker, Sitio>, map: GoogleMap){
-        //TODO convertir distancia a las coordenadas y cambiar el 0.03 por la distancia especificada
-        mSiteReference.orderByChild("latitud").startAt(latitude-0.03).endAt(latitude+0.003).addListenerForSingleValueEvent(object : ValueEventListener{
+        /**
+         * distancia = 100, es 10 km o 10,000 m
+         * distancia = 10 es 1 km o 1000 metros
+         */
+        val addedDistance = distancia * 0.00089
+        mSiteReference.orderByChild("latitud").startAt(latitude-addedDistance).endAt(latitude+addedDistance).addListenerForSingleValueEvent(object : ValueEventListener{
 
             override fun onCancelled(error: DatabaseError) {
             }
@@ -108,22 +126,31 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
 
                 for(data in snapshot.children){
                     val d:Sitio = data.getValue(Sitio::class.java)!!
-                    if(d.longitud!! <= longitud+0.003 && d.longitud!!>=longitud-0.003){
+                    if(d.longitud!! <= longitud+addedDistance && d.longitud!!>=longitud-addedDistance){
                         val marker = map.addMarker(MarkerOptions()
                                 .position(LatLng(d.latitud!!,d.longitud!!))
                                 .title(d.nombre))
+
+                        Log.d("ENTRE DISTANCIA", ""+(latitude-addedDistance)+" "+d.latitud+" "+(latitude+addedDistance))
+                        val between = (latitude-addedDistance) < d.latitud!!
+                        val after = d.latitud!! < (latitude+addedDistance)
+                        Log.d("ENTRE DISTANCIA", (between && after).toString())
                         marker.tag = data.key
                         marcadores[marker] = d
                     }
                 }
             }
         })
+
     }
 
     fun getSitesByType(latitude: Double, longitud: Double, tipos: ArrayList<String>, marcadores: HashMap<Marker, Sitio>, map: GoogleMap){
+
         mSiteReference.addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onCancelled(error: DatabaseError) {
+            override fun onCancelled(error: DatabaseError){
+
             }
+            //
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 for(marcador in marcadores.keys){
@@ -167,8 +194,66 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         })
     }
     fun getSitesByDistanceAndType(latitude: Double, longitud: Double, distancia: Int, tipos: ArrayList<String>, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
+        val addedDistance = distancia * 0.00089
+        mSiteReference.orderByChild("latitud").startAt(latitude-addedDistance).endAt(latitude+addedDistance).addListenerForSingleValueEvent(object : ValueEventListener{
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                for(marcador in marcadores.keys){
+                    marcador.remove()
+                }
+
+                for(data in snapshot.children){
+                    val d:Sitio = data.getValue(Sitio::class.java)!!
+                    if(d.longitud!! <= longitud+addedDistance && d.longitud!!>=longitud-addedDistance && tipos.contains(d.tipo)){
+                        val marker = map.addMarker(MarkerOptions()
+                                .position(LatLng(d.latitud!!,d.longitud!!))
+                                .title(d.nombre))
+
+                        Log.d("ENTRE DISTANCIA", ""+(latitude-addedDistance)+" "+d.latitud+" "+(latitude+addedDistance))
+                        val between = (latitude-addedDistance) < d.latitud!!
+                        val after = d.latitud!! < (latitude+addedDistance)
+                        Log.d("ENTRE DISTANCIA", (between && after).toString())
+                        marker.tag = data.key
+                        marcadores[marker] = d
+                    }
+                }
+            }
+        })
     }
     fun getSitesByDistanceAndTitle(latitude: Double, longitud: Double, distancia: Int, titulo: String , marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
+        val addedDistance = distancia * 0.00089
+        mSiteReference.orderByChild("latitud").startAt(latitude-addedDistance).endAt(latitude+addedDistance).addListenerForSingleValueEvent(object : ValueEventListener{
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                for(marcador in marcadores.keys){
+                    marcador.remove()
+                }
+
+                for(data in snapshot.children){
+                    val d:Sitio = data.getValue(Sitio::class.java)!!
+                    if(d.longitud!! <= longitud+addedDistance && d.longitud!!>=longitud-addedDistance && d.nombre!!.toLowerCase(Locale.getDefault()).contains(titulo.toLowerCase(Locale.getDefault()))){
+                        val marker = map.addMarker(MarkerOptions()
+                                .position(LatLng(d.latitud!!,d.longitud!!))
+                                .title(d.nombre))
+
+                        Log.d("ENTRE DISTANCIA", ""+(latitude-addedDistance)+" "+d.latitud+" "+(latitude+addedDistance))
+                        val between = (latitude-addedDistance) < d.latitud!!
+                        val after = d.latitud!! < (latitude+addedDistance)
+                        Log.d("ENTRE DISTANCIA", (between && after).toString())
+                        marker.tag = data.key
+                        marcadores[marker] = d
+                    }
+                }
+            }
+        })
     }
     fun getSitesByTypeAndTitle(latitude: Double, longitud: Double, tipos: ArrayList<String>, titulo: String, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
         mSiteReference.addListenerForSingleValueEvent(object : ValueEventListener{
@@ -251,5 +336,8 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
     interface SiteInterface{
         fun sitesFound(size : Int)
         fun typesFound(list : ArrayList<String>)
+        fun getSingleSite(site: Sitio, key: String)
     }
 }
+
+

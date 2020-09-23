@@ -3,6 +3,7 @@ package com.valentingonzalez.turistear.fragments
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.util.Log
@@ -19,6 +20,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.valentingonzalez.turistear.R
+import com.valentingonzalez.turistear.activities.maps.SecretDetailActivity
+import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.providers.SiteProvider
 import java.util.*
@@ -31,6 +35,10 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var mListener: MarkerClickedListener? = null
     private var siteProvider: SiteProvider = SiteProvider(this)
+
+    private lateinit var favoriteSelected: String
+    private var secretSelected: Boolean = false
+
     var marcadores: HashMap<Marker,Sitio> = HashMap()
     val userId = FirebaseAuth.getInstance().uid!!
 
@@ -75,15 +83,19 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
             val searchDistance = arguments?.getInt("DISTANCE")!!
             val searchTypes  = arguments?.getStringArrayList("TYPES")!!
             val searchIncludes = arguments?.getString("INCLUDES")!!
-
+            favoriteSelected = arguments?.getString("FAVORITO")!!
+            secretSelected = arguments?.getBoolean("SECRETO")!!
             val lastLocation = fusedLocationProviderClient.lastLocation
             lastLocation.addOnSuccessListener { location ->
                 if(location != null){
                     currentLocation =location
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
-                    /*TODO pasar seach distance,
-                    *  if(searchTypes[0] != "ALL") filtrar marcadores por tipo
-                    *  if(searchIncludes != "") filtrar por nombre*/
+                    if(favoriteSelected.isEmpty()){
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
+                    }else{
+                        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(favoriteSelected, 15f))
+                        siteProvider.getSite(favoriteSelected)
+                    }
+
 //                    Log.d("SEARCHPARAMSALL",searchAll.toString())
 //                    Log.d("SEARCHPARAMSDISTANCE",searchDistance.toString())
 //                    Log.d("SEARCHPARAMSTYPES",searchTypes.toString())
@@ -130,5 +142,14 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     }
 
     override fun typesFound(list: ArrayList<String>) {
+    }
+
+    override fun getSingleSite(site: Sitio, key: String) {
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(site.latitud!!, site.longitud!!), 15f))
+        if(secretSelected){
+            val intent = Intent(context, SecretDetailActivity::class.java)
+            intent.putExtra(getString(R.string.marker_location_key), key)
+            startActivity(intent)
+        }
     }
 }

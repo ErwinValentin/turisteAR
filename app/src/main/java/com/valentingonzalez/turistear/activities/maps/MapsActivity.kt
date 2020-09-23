@@ -18,20 +18,23 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
+import com.valentingonzalez.turistear.fragments.UserFavoritesFragment
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
+import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.models.Usuario
 import com.valentingonzalez.turistear.providers.UserProvider
 import dmax.dialog.SpotsDialog
 import java.util.ArrayList
 
-class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener, UserProvider.UserProviderListener {
+class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener, UserProvider.UserProviderListener, UserFavoritesFragment.FavoriteFragmentInterface{
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var actionbarToggle: ActionBarDrawerToggle
@@ -45,7 +48,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     private lateinit var userPoints: TextView
 
     private var userProvider = UserProvider(this)
-    private var searchDistance = 0.01
+    private var searchDistance = 10
     private var searchTypes = ArrayList<String>(listOf())
     private var searchIncludes = ""
     private var searchALL = false
@@ -80,7 +83,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         userProvider.getUser()
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if(allPermisionsGranted()){
-            loadMap()
+            loadMap("", false)
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
@@ -104,7 +107,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     ){
         if(requestCode == REQUEST_CODE_PERMISSIONS){
             if(allPermisionsGranted()){
-                loadMap()
+                loadMap("", false)
             }
         } else {
            showLocationSelector()
@@ -116,15 +119,17 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         //TODO show a dialog with some predetermined locations
     }
 
-    private fun loadMap() {
+    private fun loadMap(favorito : String, secreto: Boolean) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         val mapFragment = MapFragment()
         val argumentsBundle = Bundle()
-        argumentsBundle.putDouble("DISTANCE", searchDistance)
+        argumentsBundle.putInt("DISTANCE", searchDistance)
         argumentsBundle.putStringArrayList("TYPES", searchTypes)
         argumentsBundle.putString("INCLUDES", searchIncludes)
         argumentsBundle.putBoolean("ALL", searchALL)
+        argumentsBundle.putString("FAVORITO", favorito)
+        argumentsBundle.putBoolean("SECRETO", secreto)
         mapFragment.arguments = argumentsBundle
         fragmentTransaction.add(R.id.fragment_container, mapFragment)
         fragmentTransaction.commit()
@@ -133,16 +138,15 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(data != null && resultCode == Activity.RESULT_OK) {
-            //TODO change arguments based on intent data
             //if(resultCode == SEARCH_ACTIVITY_REQUEST)
             searchTypes.clear()
             searchTypes = data.getStringArrayListExtra("TYPES")!!
             searchIncludes = data.getStringExtra("CONTAINS")!!
-            //searchDistance = data.getDoubleExtra("DISTANCE", 0.0)
-            Log.d("DISTANCE", data.getDoubleExtra("DISTANCE", 0.0).toString())
+            searchDistance = data.getIntExtra("DISTANCE", 0)
+            Log.d("DISTANCE", data.getIntExtra("DISTANCE", 0).toString())
             Log.d("TYPES", data.getStringArrayListExtra("TYPES")!!.toString())
             Log.d("CONTAINS", data.getStringExtra("CONTAINS")!!.toString())
-            loadMap()
+            loadMap("", false)
         }
     }
 
@@ -176,9 +180,17 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        val argumentsBundle = Bundle()
+        argumentsBundle.putString("USERID", FirebaseAuth.getInstance().uid.toString())
         when (item.itemId){
+            //TODO add load map option
             R.id.nav_menu_favs->{
-                Toast.makeText(this, "Clicked on Favorites", Toast.LENGTH_SHORT).show()
+                val favFragment = UserFavoritesFragment()
+                favFragment.arguments = argumentsBundle
+                fragmentTransaction.add(R.id.fragment_container, favFragment)
+
             }
             R.id.nav_menu_visited->{
                 Toast.makeText(this, "Clicked on Visited", Toast.LENGTH_SHORT).show()
@@ -190,6 +202,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
                 Toast.makeText(this, "Clicked on Settings", Toast.LENGTH_SHORT).show()
             }
         }
+        fragmentTransaction.commit()
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -205,5 +218,20 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         userName.text = user.nombre
         userPoints.text = getString(R.string.puntos_usuario, user.puntosActuales)
         progessDialog!!.dismiss()
+    }
+
+    override fun getAllFavorites(favoritos: List<FavoritoUsuario>) {
+    }
+
+    override fun onFavoriteSelected(locationKey: String, secretNumber: Int) {
+
+    }
+
+    override fun gotoFavorite(favorite: FavoritoUsuario) {
+        if(favorite.numSecreto == -1){
+            favorite.llave?.let { loadMap(it, false) }
+        }else{
+            favorite.llave?.let { loadMap(it, true) }
+        }
     }
 }

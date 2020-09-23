@@ -1,8 +1,8 @@
 package com.valentingonzalez.turistear.models
 
-class FavoritoUsuario{
+class FavoritoUsuario {
     constructor()
-    constructor(llave: String?, nombre: String?, numSecreto: Int?, fechaAgregado: String?) {
+    constructor(llave: String?, nombre: String?, numSecreto: Int?, fechaAgregado: String?){
         this.llave = llave
         this.nombre = nombre
         this.numSecreto = numSecreto

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/favorite_item_type"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/border_shape"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_location_on_white_24dp" />
+
+    <TextView
+        android:id="@+id/favorite_item_title"
+        style="@style/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Titulo del lugar"
+        app:layout_constraintEnd_toStartOf="@+id/goto_location_button"
+        app:layout_constraintStart_toEndOf="@+id/favorite_item_type"
+        app:layout_constraintTop_toTopOf="@+id/favorite_item_type" />
+
+    <TextView
+        android:id="@+id/favorite_item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="fecha descubierto"
+        app:layout_constraintBottom_toBottomOf="@+id/favorite_item_type"
+        app:layout_constraintEnd_toStartOf="@+id/goto_location_button"
+        app:layout_constraintStart_toEndOf="@+id/favorite_item_type" />
+
+    <ImageButton
+        android:id="@+id/goto_location_button"
+
+        android:layout_width="52dp"
+        android:layout_height="50dp"
+        android:background="@drawable/border_shape"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/favorite_item_type"
+        app:layout_constraintEnd_toStartOf="@+id/favorite_button"
+        app:layout_constraintTop_toTopOf="@+id/favorite_item_type"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_directions_white_24dp" />
+
+    <ImageButton
+        android:id="@+id/favorite_button"
+        android:layout_width="52dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="@+id/favorite_item_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:layout_constraintTop_toTopOf="@+id/favorite_item_type"
+        app:srcCompat="@drawable/ic_favorite_red_400_24dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

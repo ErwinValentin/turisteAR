@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.adapters.LocationTypeAdapter
 import com.valentingonzalez.turistear.includes.BasicToolbar
+import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.providers.SiteProvider
 import kotlinx.android.synthetic.main.search_options_layout.*
 import java.util.ArrayList
@@ -25,7 +26,7 @@ class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelec
         setContentView(R.layout.search_options_layout)
         search_confirm_button.setOnClickListener{
             val intent = Intent()
-            intent.putExtra("DISTANCE", search_distance_bar.progress/10.0)
+            intent.putExtra("DISTANCE", search_distance_bar.progress)
             intent.putStringArrayListExtra("TYPES",selectedTypes)
             intent.putExtra("CONTAINS",search_text_tiet.text.toString())
             setResult(Activity.RESULT_OK, intent)
@@ -72,6 +73,9 @@ class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelec
         allTypes.clear()
         allTypes.addAll(list)
         adapter.notifyDataSetChanged()
+    }
+
+    override fun getSingleSite(site: Sitio, key: String) {
     }
 
 }

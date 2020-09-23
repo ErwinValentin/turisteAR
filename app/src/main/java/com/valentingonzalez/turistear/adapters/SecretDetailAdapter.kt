@@ -1,7 +1,6 @@
 package com.valentingonzalez.turistear.adapters
 
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.GONE
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import com.valentingonzalez.turistear.R

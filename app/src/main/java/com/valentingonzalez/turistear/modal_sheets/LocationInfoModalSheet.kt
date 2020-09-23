@@ -173,6 +173,9 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
     override fun getUserName(user: Usuario) {
     }
 
+    override fun getAllFavorites(favoritos: List<FavoritoUsuario>) {
+    }
+
     override fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>) {
         var count = 0
         for(v in obtained){

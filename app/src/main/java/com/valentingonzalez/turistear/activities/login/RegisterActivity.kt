@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.maps.MapsActivity
 import com.valentingonzalez.turistear.includes.BasicToolbar.show
+import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Usuario
 import com.valentingonzalez.turistear.providers.AuthProvider
 import com.valentingonzalez.turistear.providers.UserProvider
@@ -123,5 +124,8 @@ class RegisterActivity : AppCompatActivity() , UserProvider.UserProviderListener
     override fun onFavoriteChecked(isFav: List<Boolean>) {
     }
     override fun getUserName(user: Usuario) {
+    }
+
+    override fun getAllFavorites(favoritos: List<FavoritoUsuario>) {
     }
 }

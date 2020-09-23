@@ -15,6 +15,7 @@ import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
 import com.valentingonzalez.turistear.providers.UserSecretProvider
 import com.valentingonzalez.turistear.includes.BasicToolbar.show
+import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Usuario
 
 
@@ -57,6 +58,9 @@ class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, Us
     }
 
     override fun getUserName(user: Usuario) {
+    }
+
+    override fun getAllFavorites(favoritos: List<FavoritoUsuario>) {
     }
 
     override fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>) {
