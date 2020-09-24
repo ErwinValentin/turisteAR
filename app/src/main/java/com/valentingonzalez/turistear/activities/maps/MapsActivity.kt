@@ -83,7 +83,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         userProvider.getUser()
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if(allPermisionsGranted()){
-            loadMap("", false)
+            loadMap("", -2)
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
@@ -107,7 +107,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     ){
         if(requestCode == REQUEST_CODE_PERMISSIONS){
             if(allPermisionsGranted()){
-                loadMap("", false)
+                loadMap("", -2)
             }
         } else {
            showLocationSelector()
@@ -119,7 +119,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         //TODO show a dialog with some predetermined locations
     }
 
-    private fun loadMap(favorito : String, secreto: Boolean) {
+    private fun loadMap(favorito : String, numSecreto: Int) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         val mapFragment = MapFragment()
@@ -129,7 +129,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         argumentsBundle.putString("INCLUDES", searchIncludes)
         argumentsBundle.putBoolean("ALL", searchALL)
         argumentsBundle.putString("FAVORITO", favorito)
-        argumentsBundle.putBoolean("SECRETO", secreto)
+        argumentsBundle.putInt("SECRETO", numSecreto)
         mapFragment.arguments = argumentsBundle
         fragmentTransaction.add(R.id.fragment_container, mapFragment)
         fragmentTransaction.commit()
@@ -146,7 +146,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
             Log.d("DISTANCE", data.getIntExtra("DISTANCE", 0).toString())
             Log.d("TYPES", data.getStringArrayListExtra("TYPES")!!.toString())
             Log.d("CONTAINS", data.getStringExtra("CONTAINS")!!.toString())
-            loadMap("", false)
+            loadMap("", -2)
         }
     }
 
@@ -186,6 +186,9 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         argumentsBundle.putString("USERID", FirebaseAuth.getInstance().uid.toString())
         when (item.itemId){
             //TODO add load map option
+            R.id.nav_menu_map ->{
+
+            }
             R.id.nav_menu_favs->{
                 val favFragment = UserFavoritesFragment()
                 favFragment.arguments = argumentsBundle
@@ -228,10 +231,6 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     }
 
     override fun gotoFavorite(favorite: FavoritoUsuario) {
-        if(favorite.numSecreto == -1){
-            favorite.llave?.let { loadMap(it, false) }
-        }else{
-            favorite.llave?.let { loadMap(it, true) }
-        }
+        loadMap(favorite.llave!!, favorite.numSecreto!!)
     }
 }

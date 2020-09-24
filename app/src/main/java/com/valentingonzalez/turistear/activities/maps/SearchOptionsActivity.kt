@@ -66,7 +66,7 @@ class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelec
         }
     }
 
-    override fun sitesFound(size: Int) {
+    override fun listReady() {
     }
 
     override fun typesFound(list: ArrayList<String>) {

@@ -97,7 +97,8 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
 
                         val marker = map.addMarker(MarkerOptions()
                                 .position(LatLng(s?.latitud!!,s.longitud!!))
-                                .title(s.nombre))
+                                .title(s.nombre)
+                                .snippet(s.tipo))
                         marker.tag = site.key
                         lista[marker] = s
                     }
@@ -129,7 +130,8 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                     if(d.longitud!! <= longitud+addedDistance && d.longitud!!>=longitud-addedDistance){
                         val marker = map.addMarker(MarkerOptions()
                                 .position(LatLng(d.latitud!!,d.longitud!!))
-                                .title(d.nombre))
+                                .title(d.nombre)
+                                .snippet(d.tipo))
 
                         Log.d("ENTRE DISTANCIA", ""+(latitude-addedDistance)+" "+d.latitud+" "+(latitude+addedDistance))
                         val between = (latitude-addedDistance) < d.latitud!!
@@ -139,6 +141,7 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                         marcadores[marker] = d
                     }
                 }
+                listener!!.listReady()
             }
         })
 
@@ -161,12 +164,13 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                     if(tipos.contains(d.tipo)){
                         val marker = map.addMarker(MarkerOptions()
                                 .position(LatLng(d.latitud!!,d.longitud!!))
-                                .title(d.nombre))
+                                .title(d.nombre)
+                                .snippet(d.tipo))
                         marker.tag = data.key
                         marcadores[marker] = d
                     }
                 }
-                listener!!.sitesFound(marcadores.size)
+                listener!!.listReady()
             }
         })
     }
@@ -184,12 +188,13 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                     if(d.nombre!!.toLowerCase(Locale.getDefault()).contains(titulo.toLowerCase(Locale.getDefault()))){
                         val marker = map.addMarker(MarkerOptions()
                                 .position(LatLng(d.latitud!!,d.longitud!!))
-                                .title(d.nombre))
+                                .title(d.nombre)
+                                .snippet(d.tipo))
                         marker.tag = data.key
                         marcadores[marker] = d
                     }
                 }
-                listener!!.sitesFound(marcadores.size)
+                listener!!.listReady()
             }
         })
     }
@@ -211,7 +216,8 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                     if(d.longitud!! <= longitud+addedDistance && d.longitud!!>=longitud-addedDistance && tipos.contains(d.tipo)){
                         val marker = map.addMarker(MarkerOptions()
                                 .position(LatLng(d.latitud!!,d.longitud!!))
-                                .title(d.nombre))
+                                .title(d.nombre)
+                                .snippet(d.tipo))
 
                         Log.d("ENTRE DISTANCIA", ""+(latitude-addedDistance)+" "+d.latitud+" "+(latitude+addedDistance))
                         val between = (latitude-addedDistance) < d.latitud!!
@@ -221,6 +227,7 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                         marcadores[marker] = d
                     }
                 }
+                listener!!.listReady()
             }
         })
     }
@@ -242,7 +249,8 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                     if(d.longitud!! <= longitud+addedDistance && d.longitud!!>=longitud-addedDistance && d.nombre!!.toLowerCase(Locale.getDefault()).contains(titulo.toLowerCase(Locale.getDefault()))){
                         val marker = map.addMarker(MarkerOptions()
                                 .position(LatLng(d.latitud!!,d.longitud!!))
-                                .title(d.nombre))
+                                .title(d.nombre)
+                                .snippet(d.tipo))
 
                         Log.d("ENTRE DISTANCIA", ""+(latitude-addedDistance)+" "+d.latitud+" "+(latitude+addedDistance))
                         val between = (latitude-addedDistance) < d.latitud!!
@@ -252,6 +260,7 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                         marcadores[marker] = d
                     }
                 }
+                listener!!.listReady()
             }
         })
     }
@@ -270,12 +279,13 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                             && tipos.contains(d.tipo)){
                         val marker = map.addMarker(MarkerOptions()
                                 .position(LatLng(d.latitud!!,d.longitud!!))
-                                .title(d.nombre))
+                                .title(d.nombre)
+                                .snippet(d.tipo))
                         marker.tag = data.key
                         marcadores[marker] = d
                     }
                 }
-                listener!!.sitesFound(marcadores.size)
+                listener!!.listReady()
             }
         })
     }
@@ -287,7 +297,6 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
             override fun onCancelled(error: DatabaseError) {
                 
             }
-
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = arrayListOf<String>()
                 for(snap in snapshot.children){
@@ -334,7 +343,7 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         })
     }
     interface SiteInterface{
-        fun sitesFound(size : Int)
+        fun listReady()
         fun typesFound(list : ArrayList<String>)
         fun getSingleSite(site: Sitio, key: String)
     }

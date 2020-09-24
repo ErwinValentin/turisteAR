@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.maps.SecretDetailActivity
+import com.valentingonzalez.turistear.adapters.CustomInfoWindow
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.providers.SiteProvider
@@ -37,7 +39,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     private var siteProvider: SiteProvider = SiteProvider(this)
 
     private lateinit var favoriteSelected: String
-    private var secretSelected: Boolean = false
+    private var secretSelected: Int = -1
 
     var marcadores: HashMap<Marker,Sitio> = HashMap()
     val userId = FirebaseAuth.getInstance().uid!!
@@ -69,10 +71,10 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     override fun onMapReady(googleMap: GoogleMap) {
         mGoogleMap = googleMap
         //mGoogleMap.mapType = GoogleMap.MAP_TYPE_HYBRID
-        mGoogleMap.setOnPoiClickListener{poi->
-            Toast.makeText(context!!,poi.name,Toast.LENGTH_SHORT ).show()
-        }
-
+//        mGoogleMap.setOnPoiClickListener{poi->
+//            Toast.makeText(context!!,poi.name,Toast.LENGTH_SHORT ).show()
+//        }
+        mGoogleMap.setInfoWindowAdapter(CustomInfoWindow(LayoutInflater.from(context)))
         if( ContextCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             mGoogleMap.isMyLocationEnabled = true
             var searchAll = false
@@ -84,7 +86,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
             val searchTypes  = arguments?.getStringArrayList("TYPES")!!
             val searchIncludes = arguments?.getString("INCLUDES")!!
             favoriteSelected = arguments?.getString("FAVORITO")!!
-            secretSelected = arguments?.getBoolean("SECRETO")!!
+            secretSelected = arguments?.getInt("SECRETO")!!
             val lastLocation = fusedLocationProviderClient.lastLocation
             lastLocation.addOnSuccessListener { location ->
                 if(location != null){
@@ -134,10 +136,14 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
         fun markerClicked(sitio: Sitio?, key: String)
     }
 
-    override fun sitesFound(size: Int) {
-
-        if(size == 0){
-            Toast.makeText(context, "No sites found, please change parameters", Toast.LENGTH_SHORT).show()
+    override fun listReady() {
+        if(favoriteSelected.isNotEmpty()){
+            for(marcador in marcadores.keys){
+                if(marcador.tag == favoriteSelected){
+                    marcador.showInfoWindow()
+                    break
+                }
+            }
         }
     }
 
@@ -146,7 +152,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
     override fun getSingleSite(site: Sitio, key: String) {
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(site.latitud!!, site.longitud!!), 15f))
-        if(secretSelected){
+        if(secretSelected >= 0){
             val intent = Intent(context, SecretDetailActivity::class.java)
             intent.putExtra(getString(R.string.marker_location_key), key)
             startActivity(intent)

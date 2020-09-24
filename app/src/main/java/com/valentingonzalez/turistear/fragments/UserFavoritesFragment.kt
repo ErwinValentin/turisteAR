@@ -55,7 +55,7 @@ class UserFavoritesFragment : Fragment(), SiteProvider.SiteInterface, FavoriteIt
         fun gotoFavorite(favorite: FavoritoUsuario)
     }
 
-    override fun sitesFound(size: Int) {
+    override fun listReady() {
     }
 
     override fun typesFound(list: ArrayList<String>) {

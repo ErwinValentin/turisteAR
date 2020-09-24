@@ -3,6 +3,9 @@
 
     <group android:id="@+id/locations"
         >
+        <item android:id="@+id/nav_menu_map"
+            android:icon="@drawable/map_oultine_black"
+            android:title="Volver al Mapa"/>
         <item android:id="@+id/nav_menu_favs"
             android:icon="@drawable/ic_favorite_border_black_24dp"
             android:title="Mis Favoritos"/>
