@@ -152,7 +152,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
 
     override fun onBackPressed() {
         super.onBackPressed()
-        //dialogo de confirmacion
+        //TODO dialogo de confirmacion
         FirebaseAuth.getInstance().signOut()
     }
 
@@ -185,9 +185,8 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         val argumentsBundle = Bundle()
         argumentsBundle.putString("USERID", FirebaseAuth.getInstance().uid.toString())
         when (item.itemId){
-            //TODO add load map option
             R.id.nav_menu_map ->{
-
+                loadMap("",-2)
             }
             R.id.nav_menu_favs->{
                 val favFragment = UserFavoritesFragment()

@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:layout_margin="5dp">
 
     <ImageView
         android:id="@+id/favorite_item_type"
@@ -39,9 +40,8 @@
 
     <ImageButton
         android:id="@+id/goto_location_button"
-
-        android:layout_width="52dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@drawable/border_shape"
         android:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="@+id/favorite_item_type"
@@ -52,8 +52,8 @@
 
     <ImageButton
         android:id="@+id/favorite_button"
-        android:layout_width="52dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         app:layout_constraintBottom_toBottomOf="@+id/favorite_item_type"
         app:layout_constraintEnd_toEndOf="parent"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
