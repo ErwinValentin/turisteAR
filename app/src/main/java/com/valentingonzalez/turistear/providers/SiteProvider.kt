@@ -290,6 +290,41 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
         })
     }
     fun getSitesWithAllConditions(latitude: Double, longitud: Double, distancia: Int, tipos: ArrayList<String>, titulo: String, marcadores: HashMap<Marker, Sitio>, map: GoogleMap) {
+        val addedDistance = distancia * 0.00089
+        mSiteReference.orderByChild("latitud").startAt(latitude-addedDistance).endAt(latitude+addedDistance).addListenerForSingleValueEvent(object : ValueEventListener{
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                for(marcador in marcadores.keys){
+                    marcador.remove()
+                }
+
+                for(data in snapshot.children){
+                    val d:Sitio = data.getValue(Sitio::class.java)!!
+                    if(d.longitud!! <= longitud+addedDistance && d.longitud!!>=longitud-addedDistance
+                            && d.nombre!!.toLowerCase(Locale.getDefault())
+                                    .contains(titulo.toLowerCase(Locale.getDefault()))
+                            && tipos.contains(d.tipo)
+                    ){
+                        val marker = map.addMarker(MarkerOptions()
+                                .position(LatLng(d.latitud!!,d.longitud!!))
+                                .title(d.nombre)
+                                .snippet(d.tipo))
+
+                        Log.d("ENTRE DISTANCIA", ""+(latitude-addedDistance)+" "+d.latitud+" "+(latitude+addedDistance))
+                        val between = (latitude-addedDistance) < d.latitud!!
+                        val after = d.latitud!! < (latitude+addedDistance)
+                        Log.d("ENTRE DISTANCIA", (between && after).toString())
+                        marker.tag = data.key
+                        marcadores[marker] = d
+                    }
+                }
+                listener!!.listReady()
+            }
+        })
     }
 
     fun getSitesTypes(){
@@ -310,7 +345,7 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
     }
 
     fun addSiteToDiscovered(siteId: String, uId: String, nombre: String, fecha: String, esSitio: Boolean){
-        val sitioDescubierto = SitioDescubierto(fecha, nombre)
+        val sitioDescubierto = SitioDescubierto(fecha, nombre, siteId)
         Log.d("USERID", uId)
 
         mDiscoveredSiteReference.child(uId).child(siteId).addListenerForSingleValueEvent(object: ValueEventListener{
@@ -339,10 +374,29 @@ class SiteProvider(@Nullable var listener: SiteInterface?){
                     })
                 }
             }
-
         })
     }
+
+    fun getDiscoveredSites(uId: String){
+        mDiscoveredSiteReference.child(uId).addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val lista = mutableListOf<SitioDescubierto>()
+                Log.d("DESCUBIERTOS", snapshot.toString())
+                for(sitio in snapshot.children){
+                    val sitioDescubierto: SitioDescubierto = sitio.getValue(SitioDescubierto::class.java)!!
+                    lista.add(sitioDescubierto)
+                }
+
+                listener!!.userDiscovered(lista)
+            }
+        })
+    }
+
     interface SiteInterface{
+        fun userDiscovered(list: List<SitioDescubierto>)
         fun listReady()
         fun typesFound(list : ArrayList<String>)
         fun getSingleSite(site: Sitio, key: String)

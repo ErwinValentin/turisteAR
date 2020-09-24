@@ -26,15 +26,17 @@ import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
 import com.valentingonzalez.turistear.fragments.UserFavoritesFragment
+import com.valentingonzalez.turistear.fragments.VisitedFragment
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Sitio
+import com.valentingonzalez.turistear.models.SitioDescubierto
 import com.valentingonzalez.turistear.models.Usuario
 import com.valentingonzalez.turistear.providers.UserProvider
 import dmax.dialog.SpotsDialog
 import java.util.ArrayList
 
-class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener, UserProvider.UserProviderListener, UserFavoritesFragment.FavoriteFragmentInterface{
+class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener, UserProvider.UserProviderListener, UserFavoritesFragment.FavoriteFragmentInterface, VisitedFragment.VisitedFragmentInterface{
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var actionbarToggle: ActionBarDrawerToggle
@@ -195,7 +197,8 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
 
             }
             R.id.nav_menu_visited->{
-                Toast.makeText(this, "Clicked on Visited", Toast.LENGTH_SHORT).show()
+                val visFragment = VisitedFragment(FirebaseAuth.getInstance().uid.toString())
+                fragmentTransaction.add(R.id.fragment_container, visFragment)
             }
             R.id.nav_menu_shop ->{
                 Toast.makeText(this, "Tienda proximamente", Toast.LENGTH_SHORT).show()
@@ -231,5 +234,9 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
 
     override fun gotoFavorite(favorite: FavoritoUsuario) {
         loadMap(favorite.llave!!, favorite.numSecreto!!)
+    }
+    //TODO  si el marcador esta fuera del rango no se muestra en el mapa
+    override fun gotoVisited(sitio: SitioDescubierto) {
+        loadMap(sitio.llave!!, -1)
     }
 }

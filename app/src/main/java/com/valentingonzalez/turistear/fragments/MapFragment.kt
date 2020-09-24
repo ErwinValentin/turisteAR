@@ -26,6 +26,7 @@ import com.valentingonzalez.turistear.activities.maps.SecretDetailActivity
 import com.valentingonzalez.turistear.adapters.CustomInfoWindow
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Sitio
+import com.valentingonzalez.turistear.models.SitioDescubierto
 import com.valentingonzalez.turistear.providers.SiteProvider
 import java.util.*
 import kotlin.collections.HashMap
@@ -134,6 +135,9 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
     interface MarkerClickedListener {
         fun markerClicked(sitio: Sitio?, key: String)
+    }
+
+    override fun userDiscovered(list: List<SitioDescubierto>) {
     }
 
     override fun listReady() {

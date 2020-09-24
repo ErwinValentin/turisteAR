@@ -28,7 +28,7 @@ class UserSecretProvider (private var listener: UserSecrets){
     }
 
     fun addSecretToDiscovered(uId: String, siteKey: String, secretNumber: Int, secretName: String){
-        val sitioDescubierto = SitioDescubierto(Calendar.getInstance().time.toString(), secretName)
+        val sitioDescubierto = SitioDescubierto(Calendar.getInstance().time.toString(), secretName, siteKey)
         mUserSecretReference.child(uId).child(siteKey).child(secretNumber.toString()).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }

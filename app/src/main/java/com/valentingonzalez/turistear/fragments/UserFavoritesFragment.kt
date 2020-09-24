@@ -13,6 +13,7 @@ import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.adapters.FavoriteItemAdapter
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Sitio
+import com.valentingonzalez.turistear.models.SitioDescubierto
 import com.valentingonzalez.turistear.models.Usuario
 import com.valentingonzalez.turistear.providers.SiteProvider
 import com.valentingonzalez.turistear.providers.UserProvider
@@ -53,6 +54,9 @@ class UserFavoritesFragment : Fragment(), SiteProvider.SiteInterface, FavoriteIt
     interface FavoriteFragmentInterface{
         fun onFavoriteSelected(locationKey: String, secretNumber: Int);
         fun gotoFavorite(favorite: FavoritoUsuario)
+    }
+
+    override fun userDiscovered(list: List<SitioDescubierto>) {
     }
 
     override fun listReady() {

@@ -11,6 +11,7 @@ import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.adapters.LocationTypeAdapter
 import com.valentingonzalez.turistear.includes.BasicToolbar
 import com.valentingonzalez.turistear.models.Sitio
+import com.valentingonzalez.turistear.models.SitioDescubierto
 import com.valentingonzalez.turistear.providers.SiteProvider
 import kotlinx.android.synthetic.main.search_options_layout.*
 import java.util.ArrayList
@@ -64,6 +65,9 @@ class SearchOptionsActivity: AppCompatActivity(), LocationTypeAdapter.CheckSelec
         }else{
             selectedTypes.remove(text)
         }
+    }
+
+    override fun userDiscovered(list: List<SitioDescubierto>) {
     }
 
     override fun listReady() {
