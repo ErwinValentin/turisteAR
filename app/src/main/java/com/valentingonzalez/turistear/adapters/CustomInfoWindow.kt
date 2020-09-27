@@ -44,6 +44,9 @@ class CustomInfoWindow(private val layoutInflater: LayoutInflater) : GoogleMap.I
             "Montaña"->{
                 icon.setImageResource(R.drawable.marker_mountain_icon)
             }
+            "Centro Comercial"->{
+                icon.setImageResource(R.drawable.marker_mall_icon)
+            }
         }
         return view
     }

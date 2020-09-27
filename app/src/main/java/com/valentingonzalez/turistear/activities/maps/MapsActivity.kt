@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.fragments.MapFragment
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
+import com.valentingonzalez.turistear.fragments.RoutesFragment
 import com.valentingonzalez.turistear.fragments.UserFavoritesFragment
 import com.valentingonzalez.turistear.fragments.VisitedFragment
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
@@ -190,6 +191,10 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
             R.id.nav_menu_map ->{
                 loadMap("",-2)
             }
+            R.id.nav_menu_route ->{
+                val routeFragment = RoutesFragment()
+                fragmentTransaction.add(R.id.fragment_container, routeFragment)
+            }
             R.id.nav_menu_favs->{
                 val favFragment = UserFavoritesFragment()
                 favFragment.arguments = argumentsBundle
@@ -235,7 +240,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     override fun gotoFavorite(favorite: FavoritoUsuario) {
         loadMap(favorite.llave!!, favorite.numSecreto!!)
     }
-    //TODO  si el marcador esta fuera del rango no se muestra en el mapa
+    //TODO  si el marcador esta fuera del rango no se muestra en el mapa, se podrían mostrar los sitios descubiertos sin importar la distancia
     override fun gotoVisited(sitio: SitioDescubierto) {
         loadMap(sitio.llave!!, -1)
     }

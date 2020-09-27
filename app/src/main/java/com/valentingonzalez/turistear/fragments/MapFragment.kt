@@ -28,6 +28,7 @@ import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Sitio
 import com.valentingonzalez.turistear.models.SitioDescubierto
 import com.valentingonzalez.turistear.providers.SiteProvider
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -94,11 +95,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
                     currentLocation =location
                     if(favoriteSelected.isEmpty()){
                         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
-                    }else{
-                        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(favoriteSelected, 15f))
-                        siteProvider.getSite(favoriteSelected)
                     }
-
 //                    Log.d("SEARCHPARAMSALL",searchAll.toString())
 //                    Log.d("SEARCHPARAMSDISTANCE",searchDistance.toString())
 //                    Log.d("SEARCHPARAMSTYPES",searchTypes.toString())
@@ -141,13 +138,8 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     }
 
     override fun listReady() {
-        if(favoriteSelected.isNotEmpty()){
-            for(marcador in marcadores.keys){
-                if(marcador.tag == favoriteSelected){
-                    marcador.showInfoWindow()
-                    break
-                }
-            }
+        if(favoriteSelected.isNotEmpty()) {
+            siteProvider.getSite(favoriteSelected)
         }
     }
 
@@ -156,6 +148,25 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
     override fun getSingleSite(site: Sitio, key: String) {
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(site.latitud!!, site.longitud!!), 15f))
+        val marker = mGoogleMap.addMarker(MarkerOptions()
+                .position(LatLng(site.latitud!!,site.longitud!!))
+                .title(site.nombre)
+                .snippet(site.tipo))
+        marker.tag = key
+        try{
+            marcadores[marker] = site
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+//        if(favoriteSelected.isNotEmpty()){
+//            for(marcador in marcadores.keys){
+//                if(marcador.tag == favoriteSelected){
+//                    marcador.showInfoWindow()
+//                    break
+//                }
+//            }
+//        }
+        marker.showInfoWindow()
         if(secretSelected >= 0){
             val intent = Intent(context, SecretDetailActivity::class.java)
             intent.putExtra(getString(R.string.marker_location_key), key)
