@@ -1,8 +1,7 @@
-package com.valentingonzalez.turistear
+package com.valentingonzalez.turistear.utils
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.barcode.BarcodeScanning

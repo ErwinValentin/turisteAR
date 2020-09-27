@@ -15,14 +15,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.firebase.storage.ktx.storageMetadata
-import com.valentingonzalez.turistear.BarcodeAnalyzer
+import com.valentingonzalez.turistear.utils.BarcodeAnalyzer
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.models.Secreto
 import com.valentingonzalez.turistear.providers.SecretProvider
@@ -93,16 +91,16 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
                         Log.d("LISTA CONTIENE", listaLlaves.contains(it).toString())
                         if (listaLlaves.contains(it)) {
                             var numero = it.substring(it.length - 1).toInt()
-                            if (listaDescubiertos[numero]!= null) {
+                            if (listaDescubiertos[numero] != null) {
                                 Toast.makeText(this, "Ya has descubierto este secreto", Toast.LENGTH_SHORT).show()
                             } else {
                                 val secreto = listaSecretos[numero]
                                 val loc = Location("")
                                 loc.latitude = secreto.latitud!!
                                 loc.longitude = secreto.longitud!!
-                                if(loc.distanceTo(currentLocation)<50){
+                                if (loc.distanceTo(currentLocation) < 50) {
                                     userSecretProvider.addSecretToDiscovered(uId, markerLocation, numero, listaSecretos[numero].nombre.toString())
-                                }else{
+                                } else {
                                     Toast.makeText(this, "Este secreto esta muy lejos", Toast.LENGTH_SHORT).show()
                                 }
                             }

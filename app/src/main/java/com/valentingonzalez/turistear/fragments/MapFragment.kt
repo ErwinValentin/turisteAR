@@ -5,11 +5,16 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,17 +25,23 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.maps.android.PolyUtil
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.activities.maps.SecretDetailActivity
 import com.valentingonzalez.turistear.adapters.CustomInfoWindow
-import com.valentingonzalez.turistear.models.FavoritoUsuario
-import com.valentingonzalez.turistear.models.Sitio
-import com.valentingonzalez.turistear.models.SitioDescubierto
+import com.valentingonzalez.turistear.models.*
 import com.valentingonzalez.turistear.providers.SiteProvider
+import com.valentingonzalez.turistear.utils.RouteDistanceComparator
+import org.json.JSONArray
+import org.json.JSONObject
 import java.lang.Exception
+import java.lang.NullPointerException
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.collections.indices as indices
 
 
 class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListener, SiteProvider.SiteInterface{
@@ -40,8 +51,9 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     private var mListener: MarkerClickedListener? = null
     private var siteProvider: SiteProvider = SiteProvider(this)
 
-    private lateinit var favoriteSelected: String
-    private var secretSelected: Int = -1
+    private lateinit var selectedFavorite: String
+    private var selectedSecret: Int = -1
+    private var selectedRoute : Ruta? = null
 
     var marcadores: HashMap<Marker,Sitio> = HashMap()
     val userId = FirebaseAuth.getInstance().uid!!
@@ -87,13 +99,22 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
             val searchDistance = arguments?.getInt("DISTANCE")!!
             val searchTypes  = arguments?.getStringArrayList("TYPES")!!
             val searchIncludes = arguments?.getString("INCLUDES")!!
-            favoriteSelected = arguments?.getString("FAVORITO")!!
-            secretSelected = arguments?.getInt("SECRETO")!!
+            selectedFavorite = arguments?.getString("FAVORITO")!!
+            selectedSecret = arguments?.getInt("SECRETO")!!
+
             val lastLocation = fusedLocationProviderClient.lastLocation
             lastLocation.addOnSuccessListener { location ->
                 if(location != null){
                     currentLocation =location
-                    if(favoriteSelected.isEmpty()){
+                    try{
+                        selectedRoute = arguments?.getSerializable("RUTA") as Ruta
+
+                        Log.d("RUTA SELECCIONADA", selectedRoute.toString())
+                        drawPolyline(selectedRoute!!, location)
+                    }catch (npe : NullPointerException){
+                        npe.printStackTrace()
+                    }
+                    if(selectedFavorite.isEmpty()){
                         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15f))
                     }
 //                    Log.d("SEARCHPARAMSALL",searchAll.toString())
@@ -109,6 +130,58 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
         mGoogleMap.setOnMarkerClickListener(this)
     }
 
+    private fun drawPolyline(selectedRoute: Ruta, location: Location) {
+        val listaPuntos = selectedRoute.puntos!!
+        val currentLatLng = LatLng(location.latitude, location.longitude)
+        Collections.sort(listaPuntos, RouteDistanceComparator(currentLatLng))
+
+        val paths: MutableList<List<LatLng>> = ArrayList()
+        val urlRequest = makeURL(listaPuntos, location)
+
+        val directionsRequest = object: StringRequest(Request.Method.GET, urlRequest,
+                                    Response.Listener<String>{
+                                        response ->
+                                        Log.d("RESPONSE", response.toString())
+                                        val jsonResponse = JSONObject(response)
+                                        val routes = jsonResponse.getJSONArray("routes")
+                                        val legs = routes.getJSONObject(0).getJSONArray("legs")
+                                        val steps : MutableList<JSONArray> = ArrayList()
+                                        for (i in 0 until legs.length()){
+                                            val step = legs.getJSONObject(i).getJSONArray("steps")
+                                            steps.add(step)
+                                        }
+                                        for(i in 0 until steps.size){
+                                            for(j in 0 until steps[i].length()){
+                                                val point = steps[i].getJSONObject(j).getJSONObject("polyline").getString("points")
+                                                paths.add(PolyUtil.decode(point))
+                                            }
+                                        }
+                                        for (i in 0 until paths.size){
+                                            mGoogleMap.addPolyline(PolylineOptions().addAll(paths[i]).color(Color.RED))
+                                        }
+
+                                    }, Response.ErrorListener {  }
+                                    ){}
+        val requestQueue = Volley.newRequestQueue(context)
+        requestQueue.add(directionsRequest)
+    }
+    private fun makeURL(puntos: List<PuntoRuta>, location: Location): String{
+        val baseUrl = "https://maps.googleapis.com/maps/api/directions/json?"
+        val origin = "origin=${location.latitude},${location.longitude}"
+        val destination = "&destination=${puntos[puntos.size-1].latitud},${puntos[puntos.size-1].longitud}"
+        var waypoints = "&waypoints="
+        for( i in puntos.indices-1){
+            Log.d("PUNTOS", i.toString())
+            waypoints+= "${puntos[i].latitud},${puntos[i].longitud}"
+            if(i<puntos.size-1){
+                waypoints+="|"
+            }
+        }
+        val apiKey = "&key=${getString(R.string.google_maps_key)}"
+        val returnPath = baseUrl+origin+destination+waypoints+apiKey
+        Log.d("REQUEST", returnPath)
+        return returnPath
+    }
 //    private fun showNearby(location: Location, marcadores: HashMap<Marker,Sitio>, map: GoogleMap,b: Boolean) {
 //        if(b){
 //            siteProvider.getNearbySites(location.latitude, location.longitude, marcadores, mGoogleMap)
@@ -138,8 +211,8 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     }
 
     override fun listReady() {
-        if(favoriteSelected.isNotEmpty()) {
-            siteProvider.getSite(favoriteSelected)
+        if(selectedFavorite.isNotEmpty()) {
+            siteProvider.getSite(selectedFavorite)
         }
     }
 
@@ -167,7 +240,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 //            }
 //        }
         marker.showInfoWindow()
-        if(secretSelected >= 0){
+        if(selectedSecret >= 0){
             val intent = Intent(context, SecretDetailActivity::class.java)
             intent.putExtra(getString(R.string.marker_location_key), key)
             startActivity(intent)

@@ -29,15 +29,17 @@ import com.valentingonzalez.turistear.fragments.RoutesFragment
 import com.valentingonzalez.turistear.fragments.UserFavoritesFragment
 import com.valentingonzalez.turistear.fragments.VisitedFragment
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
-import com.valentingonzalez.turistear.models.FavoritoUsuario
-import com.valentingonzalez.turistear.models.Sitio
-import com.valentingonzalez.turistear.models.SitioDescubierto
-import com.valentingonzalez.turistear.models.Usuario
+import com.valentingonzalez.turistear.models.*
 import com.valentingonzalez.turistear.providers.UserProvider
 import dmax.dialog.SpotsDialog
 import java.util.ArrayList
 
-class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.OnNavigationItemSelectedListener, UserProvider.UserProviderListener, UserFavoritesFragment.FavoriteFragmentInterface, VisitedFragment.VisitedFragmentInterface{
+class MapsActivity : AppCompatActivity(), MarkerClickedListener,
+                    NavigationView.OnNavigationItemSelectedListener,
+                    UserProvider.UserProviderListener,
+                    UserFavoritesFragment.FavoriteFragmentInterface,
+                    VisitedFragment.VisitedFragmentInterface,
+                    RoutesFragment.RouteFragmentInterface{
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var actionbarToggle: ActionBarDrawerToggle
@@ -55,6 +57,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     private var searchTypes = ArrayList<String>(listOf())
     private var searchIncludes = ""
     private var searchALL = false
+    private var rutaSeleccionada : Ruta? = null
 
     var progessDialog: AlertDialog? = null
 
@@ -133,6 +136,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
         argumentsBundle.putBoolean("ALL", searchALL)
         argumentsBundle.putString("FAVORITO", favorito)
         argumentsBundle.putInt("SECRETO", numSecreto)
+        argumentsBundle.putSerializable("RUTA", rutaSeleccionada)
         mapFragment.arguments = argumentsBundle
         fragmentTransaction.add(R.id.fragment_container, mapFragment)
         fragmentTransaction.commit()
@@ -240,8 +244,14 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener, NavigationView.
     override fun gotoFavorite(favorite: FavoritoUsuario) {
         loadMap(favorite.llave!!, favorite.numSecreto!!)
     }
-    //TODO  si el marcador esta fuera del rango no se muestra en el mapa, se podrían mostrar los sitios descubiertos sin importar la distancia
     override fun gotoVisited(sitio: SitioDescubierto) {
         loadMap(sitio.llave!!, -1)
+    }
+
+    override fun routeSelected(ruta: Ruta) {
+        rutaSeleccionada = ruta
+        searchDistance = 100
+        loadMap("",-2)
+        Log.d("RUTA", ruta.toString())
     }
 }

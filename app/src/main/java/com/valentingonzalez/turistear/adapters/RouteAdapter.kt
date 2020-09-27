@@ -14,6 +14,7 @@ class RouteAdapter (var rutas : List<Ruta>, var listener: RouteActions, var cont
     class ViewHolder (view: View): RecyclerView.ViewHolder(view){
         val nombreRuta : TextView = view.findViewById(R.id.route_title)
         val puntosRuta : LinearLayout = view.findViewById(R.id.route_points)
+        val item  = view
     }
 
 
@@ -35,6 +36,9 @@ class RouteAdapter (var rutas : List<Ruta>, var listener: RouteActions, var cont
             holder.puntosRuta.addView(view)
         }
         holder.nombreRuta.text = ruta.nombre
+        holder.itemView.setOnClickListener {
+            listener.selectRoute(ruta)
+        }
     }
 
     interface RouteActions{

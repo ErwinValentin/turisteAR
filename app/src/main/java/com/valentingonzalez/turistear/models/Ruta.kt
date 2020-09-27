@@ -1,6 +1,8 @@
 package com.valentingonzalez.turistear.models
 
-class Ruta {
+import java.io.Serializable
+
+class Ruta: Serializable{
     constructor(nombre: String?, puntos: List<PuntoRuta>?) {
         this.nombre = nombre
         this.puntos = puntos
