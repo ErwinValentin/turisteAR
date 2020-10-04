@@ -1,25 +1,32 @@
 package com.valentingonzalez.turistear.activities.camera
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.impl.PreviewConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.firebase.storage.ktx.storageMetadata
+import com.squareup.picasso.Picasso
 import com.valentingonzalez.turistear.utils.BarcodeAnalyzer
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.models.Secreto
@@ -33,7 +40,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.collections.HashMap
 
-class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, SecretProvider.SiteSecrets {
+class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, SecretProvider.SiteSecrets{
     private var imageCapture: ImageCapture? = null
     private lateinit var imageAnalyzer: ImageAnalysis
     private lateinit var outputDir: File
@@ -44,6 +51,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
     private val userSecretProvider = UserSecretProvider(this)
     private val secretProvider = SecretProvider(this)
+//    private val latlngList = mutableListOf<LocationData>()
     private var listaLlaves = mutableListOf<String>()
     private lateinit var listaDescubiertos: HashMap<Int, Boolean>
     private var listaSecretos = mutableListOf<Secreto>()
@@ -73,7 +81,21 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
-
+//        arLocalizerView = findViewById(R.id.arLocalizer)
+//        arLocalizerView.onCreate(this)
+//        show_locations_button.tag = 0
+//        show_locations_button.setOnClickListener{
+//            if(it.tag==0) {
+//                viewFinder.visibility = View.INVISIBLE
+//                arLocalizerView.visibility = View.VISIBLE
+//                arLocalizerView.setDestinations(latlngList as List<LocationData>)
+//                it.tag = 1
+//            }else{
+//                viewFinder.visibility = View.INVISIBLE
+//                arLocalizerView.visibility = View.VISIBLE
+//                it.tag = 0
+//            }
+//        }
         camera_capture_button.setOnClickListener { takePhoto() }
         var scan = false
         var scannedCode = ""
@@ -83,7 +105,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 //            startActivity(intent)
             if (!scan) {
                 scan = true
-                qr_scan_button.text = "STOP SCAN"
+                qr_scan_button.setImageResource(R.drawable.qr_white_cancel)
                 imageAnalyzer.setAnalyzer(Executors.newSingleThreadExecutor(), BarcodeAnalyzer {
                     if (scannedCode != it) {
                         scannedCode = it
@@ -112,10 +134,12 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
                 })
             } else {
                 scan = false
-                qr_scan_button.text = "START SCAN"
+                qr_scan_button.setImageResource(R.drawable.qr_white)
                 imageAnalyzer.clearAnalyzer()
             }
         }
+
+
         outputDir = File(applicationContext.getExternalFilesDir(null).toString() + "/TouristeAR/" + markerLocation)
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -173,7 +197,6 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
         cameraProviderFuture.addListener(Runnable {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
             val preview = Preview.Builder()
                     .build()
                     .also {
@@ -235,7 +258,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         private const val TAG = "CameraXAR"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     override fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>) {
@@ -248,5 +271,8 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
     override fun onSecretDiscovered(secretList: List<Secreto>) {
         listaSecretos.addAll(secretList)
+//        for(secret in secretList){
+//            latlngList.add(LocationData(secret.latitud!!,secret.longitud!!))
+//        }
     }
 }
