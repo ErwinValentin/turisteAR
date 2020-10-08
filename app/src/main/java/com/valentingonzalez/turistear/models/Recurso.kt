@@ -1,6 +1,8 @@
 package com.valentingonzalez.turistear.models
 
-class Recurso{
+import java.io.Serializable
+
+class Recurso: Serializable{
     constructor()
     constructor(tipo: String?, valor: String?) {
         this.tipo = tipo

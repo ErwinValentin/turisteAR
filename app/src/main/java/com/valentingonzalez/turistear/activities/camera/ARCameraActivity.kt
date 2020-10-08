@@ -3,7 +3,9 @@ package com.valentingonzalez.turistear.activities.camera
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.*
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -81,28 +83,10 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
-//        arLocalizerView = findViewById(R.id.arLocalizer)
-//        arLocalizerView.onCreate(this)
-//        show_locations_button.tag = 0
-//        show_locations_button.setOnClickListener{
-//            if(it.tag==0) {
-//                viewFinder.visibility = View.INVISIBLE
-//                arLocalizerView.visibility = View.VISIBLE
-//                arLocalizerView.setDestinations(latlngList as List<LocationData>)
-//                it.tag = 1
-//            }else{
-//                viewFinder.visibility = View.INVISIBLE
-//                arLocalizerView.visibility = View.VISIBLE
-//                it.tag = 0
-//            }
-//        }
         camera_capture_button.setOnClickListener { takePhoto() }
         var scan = false
         var scannedCode = ""
         qr_scan_button.setOnClickListener { button ->
-//            val intent = Intent(this, QRCameraActivity::class.java)
-//            intent.putExtra(getString(R.string.marker_location_key), currLocation)
-//            startActivity(intent)
             if (!scan) {
                 scan = true
                 qr_scan_button.setImageResource(R.drawable.qr_white_cancel)
@@ -139,7 +123,18 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
             }
         }
 
+        show_locations_button.setOnClickListener{
+            val intent = Intent(this, CameraLocationsActivity::class.java)
+            intent.putExtra("SECRET1", listaSecretos[0])
+            intent.putExtra("SECRET2", listaSecretos[1])
+            intent.putExtra("SECRET3", listaSecretos[2])
+            intent.putExtra("DISCOVERED1", listaDescubiertos[0])
+            intent.putExtra("DISCOVERED2", listaDescubiertos[1])
+            intent.putExtra("DISCOVERED3", listaDescubiertos[2])
+            intent.putExtra("CURRLOCATION", currentLocation)
 
+            startActivity(intent)
+        }
         outputDir = File(applicationContext.getExternalFilesDir(null).toString() + "/TouristeAR/" + markerLocation)
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -200,7 +195,9 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
             val preview = Preview.Builder()
                     .build()
                     .also {
-                        it.setSurfaceProvider(viewFinder.createSurfaceProvider())
+                        val surfaceProvider = viewFinder.createSurfaceProvider()
+                        it.setSurfaceProvider(surfaceProvider)
+
                     }
             imageCapture = ImageCapture.Builder()
                     .build()
