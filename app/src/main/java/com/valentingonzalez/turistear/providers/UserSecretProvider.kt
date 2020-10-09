@@ -18,9 +18,7 @@ class UserSecretProvider (private var listener: UserSecrets){
                 val obtained = hashMapOf<Int, Boolean>()
                 for(user_count in snapshot.children){
                     Log.d("USER_SECRET", user_count.value.toString())
-                    if(user_count.value !=false) {
-                        obtained[user_count.key!!.toInt()] = true
-                    }
+                    obtained[user_count.key!!.toInt()] = user_count.value !=false
                 }
                 listener.onSiteDiscoveredStatus(obtained)
             }

@@ -23,6 +23,7 @@ class ARCamera(context: Context, var surfaceView: SurfaceView) : ViewGroup(conte
     private var act: Activity = context as Activity
 
     private var projectionMatrix = FloatArray(16)
+
     private var cameraWidth : Int = 0
     private var cameraHeigth : Int = 0
     private val Z_NEAR = 0.5f

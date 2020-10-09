@@ -6,12 +6,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
+import android.opengl.Matrix
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
+import android.view.Surface
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -31,10 +42,12 @@ import com.google.firebase.storage.ktx.storageMetadata
 import com.squareup.picasso.Picasso
 import com.valentingonzalez.turistear.utils.BarcodeAnalyzer
 import com.valentingonzalez.turistear.R
+import com.valentingonzalez.turistear.models.AROverlay
 import com.valentingonzalez.turistear.models.Secreto
 import com.valentingonzalez.turistear.providers.SecretProvider
 import com.valentingonzalez.turistear.providers.UserSecretProvider
 import kotlinx.android.synthetic.main.camera_ar_layout.*
+import kotlinx.android.synthetic.main.camera_ar_location_viewer.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,7 +55,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.collections.HashMap
 
-class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, SecretProvider.SiteSecrets{
+class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, SecretProvider.SiteSecrets, SensorEventListener, LocationListener{
     private var imageCapture: ImageCapture? = null
     private lateinit var imageAnalyzer: ImageAnalysis
     private lateinit var outputDir: File
@@ -50,19 +63,38 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
     private lateinit var markerLocation: String
     private lateinit var currentLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var sensorManager: SensorManager
+    private var locationManager : LocationManager?= null
+    private val  MIN_DISTANCE_CHANGE_FOR_UPDATES = 0L // 10 meters
+    private val MIN_TIME_BW_UPDATES = 0L
+    private var projectionMatrix = FloatArray(16)
+    private val Z_NEAR = 0.5f
+    private val Z_FAR = 10000f
+
+    private var arOverlayView : AROverlay? = null
 
     private val userSecretProvider = UserSecretProvider(this)
     private val secretProvider = SecretProvider(this)
 //    private val latlngList = mutableListOf<LocationData>()
     private var listaLlaves = mutableListOf<String>()
+    private var listaDescubierto : List<Boolean> = listOf(false,false, false)
     private lateinit var listaDescubiertos: HashMap<Int, Boolean>
     private var listaSecretos = mutableListOf<Secreto>()
     private val uId = FirebaseAuth.getInstance().uid.toString()
+
+    private var trackLocations : Boolean = false
+    var isGPSEnabled : Boolean = true
+    var isNetworkEnabled : Boolean = true
+    var locationServiceAvailable : Boolean = true
+    var declination = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.camera_ar_layout)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        arOverlayView = AROverlay(this,listaSecretos, listaDescubierto)
+
         val lastLocation = fusedLocationProviderClient.lastLocation
         lastLocation.addOnSuccessListener { location ->
             if(location != null){
@@ -124,16 +156,20 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         }
 
         show_locations_button.setOnClickListener{
-            val intent = Intent(this, CameraLocationsActivity::class.java)
-            intent.putExtra("SECRET1", listaSecretos[0])
-            intent.putExtra("SECRET2", listaSecretos[1])
-            intent.putExtra("SECRET3", listaSecretos[2])
-            intent.putExtra("DISCOVERED1", listaDescubiertos[0])
-            intent.putExtra("DISCOVERED2", listaDescubiertos[1])
-            intent.putExtra("DISCOVERED3", listaDescubiertos[2])
-            intent.putExtra("CURRLOCATION", currentLocation)
+            listaDescubierto  = listaDescubiertos.values.toList()
+            trackLocations = !trackLocations
+            if(trackLocations){
+                show_locations_button.setImageResource(R.drawable.cancel_location_sm)
+                registerSensors()
+                initLocationService()
+                initAROverlay()
+            }else{
+                show_locations_button.setImageResource(R.drawable.ic_location_on_white_24dp)
+                removeSensor()
+                stopLocationService()
+                removeAROverlay()
+            }
 
-            startActivity(intent)
         }
         outputDir = File(applicationContext.getExternalFilesDir(null).toString() + "/TouristeAR/" + markerLocation)
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -211,6 +247,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
             try {
                 cameraProvider.unbindAll()
+
                 cameraProvider.bindToLifecycle(
                         this, cameraSelector, preview, imageCapture, imageAnalyzer)
             } catch (exc: Exception) {
@@ -246,6 +283,73 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
             mediaDir else filesDir
     }
 
+    private fun initLocationService() {
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+        try {
+            locationManager = (this.getSystemService(Context.LOCATION_SERVICE) as LocationManager)
+
+            // Get GPS and network status
+            isGPSEnabled = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            isNetworkEnabled = locationManager!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            if (!isNetworkEnabled && !isGPSEnabled) {
+                // cannot get location
+                locationServiceAvailable = false
+            }
+            locationServiceAvailable = true
+            if (isNetworkEnabled) {
+                locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
+                if (locationManager != null) {
+                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
+                    updateLatestLocation(currentLocation)
+                }
+            }
+            if (isGPSEnabled) {
+                locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
+                if (locationManager != null) {
+                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
+                    updateLatestLocation(currentLocation)
+                }
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+    private fun stopLocationService(){
+        locationManager!!.removeUpdates(this)
+    }
+    private fun updateLatestLocation(p0: Location?) {
+        if (arOverlayView != null && p0 != null) {
+            arOverlayView!!.updateCurrentLocation(p0)
+//            tv_current_location.setText(String.format("lat: %s \nlon: %s \naltitude: %s \n",
+//                    p0.latitude, p0.longitude, p0.altitude))
+        }
+    }
+    fun registerSensors(){
+        sensorManager.registerListener(this,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
+                SensorManager.SENSOR_DELAY_NORMAL)
+    }
+    fun removeSensor(){
+        sensorManager.unregisterListener(this)
+    }
+    fun initAROverlay(){
+        if (arOverlayView!!.getParent() != null) {
+            (arOverlayView!!.getParent() as ViewGroup).removeView(arOverlayView)
+        }
+        frame_container.addView(arOverlayView)
+    }
+    fun removeAROverlay(){
+        if (arOverlayView!!.getParent() != null) {
+            (arOverlayView!!.getParent() as ViewGroup).removeView(arOverlayView)
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
@@ -260,6 +364,11 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
     override fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>) {
         listaDescubiertos = HashMap(obtained)
+        listaDescubierto = listaDescubiertos.values.toList()
+        Log.d("TESTDESC", listaDescubierto.size.toString()+ " "+listaDescubierto.toString())
+        if(arOverlayView!= null) {
+            arOverlayView!!.updateDiscovered(listaDescubierto)
+        }
     }
 
     override fun onSecretDiscovered() {
@@ -271,5 +380,73 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 //        for(secret in secretList){
 //            latlngList.add(LocationData(secret.latitud!!,secret.longitud!!))
 //        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        if (accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
+            Log.w("DeviceOrientation", "Orientation compass unreliable")
+        }
+    }
+
+    override fun onSensorChanged(sensorEvent: SensorEvent) {
+        if (sensorEvent.sensor.type == Sensor.TYPE_ROTATION_VECTOR) {
+            val rotationMatrixFromVector = FloatArray(16)
+            val rotationMatrix = FloatArray(16)
+            SensorManager.getRotationMatrixFromVector(rotationMatrixFromVector, sensorEvent.values)
+            val screenRotation = this.windowManager.defaultDisplay
+                    .rotation
+            when (screenRotation) {
+                Surface.ROTATION_90 -> SensorManager.remapCoordinateSystem(rotationMatrixFromVector,
+                        SensorManager.AXIS_Y,
+                        SensorManager.AXIS_MINUS_X, rotationMatrix)
+                Surface.ROTATION_270 -> SensorManager.remapCoordinateSystem(rotationMatrixFromVector,
+                        SensorManager.AXIS_MINUS_Y,
+                        SensorManager.AXIS_X, rotationMatrix)
+                Surface.ROTATION_180 -> SensorManager.remapCoordinateSystem(rotationMatrixFromVector,
+                        SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y,
+                        rotationMatrix)
+                else -> SensorManager.remapCoordinateSystem(rotationMatrixFromVector,
+                        SensorManager.AXIS_X, SensorManager.AXIS_Y,
+                        rotationMatrix)
+            }
+            generateProjectionMatrix()
+            val rotatedProjectionMatrix = FloatArray(16)
+            Matrix.multiplyMM(rotatedProjectionMatrix, 0, projectionMatrix, 0, rotationMatrix, 0)
+            arOverlayView!!.updateRotatedProjectionMatrix(rotatedProjectionMatrix)
+
+            //Heading
+            val orientation = FloatArray(3)
+            SensorManager.getOrientation(rotatedProjectionMatrix, orientation)
+            //val bearing = Math.toDegrees(orientation[0].toDouble()) + declination
+            //tv_bearing.setText(String.format("Bearing: %s", bearing))
+        }
+    }
+    private fun generateProjectionMatrix() {
+        var cameraWidth = viewFinder.measuredWidth
+        var cameraHeigth = viewFinder.measuredHeight
+        var ratio = 0f
+        if (cameraWidth < cameraHeigth) {
+            ratio = cameraWidth.toFloat() / cameraHeigth
+        } else {
+            ratio = cameraHeigth.toFloat() / cameraWidth
+        }
+        val OFFSET = 0
+        val LEFT = -ratio
+        val RIGHT = ratio
+        val BOTTOM = -1f
+        val TOP = 1f
+        Matrix.frustumM(projectionMatrix, OFFSET, LEFT, RIGHT, BOTTOM, TOP, Z_NEAR, Z_FAR)
+    }
+    override fun onLocationChanged(p0: Location?) {
+        updateLatestLocation(p0)
+    }
+
+    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+    }
+
+    override fun onProviderEnabled(p0: String?) {
+    }
+
+    override fun onProviderDisabled(p0: String?) {
     }
 }

@@ -33,6 +33,9 @@ class AROverlay(context: Context, var locations: List<Secreto>, var discovered: 
         }
     }
 
+    fun updateDiscovered(newDiscovered: List<Boolean>){
+        this.discovered = newDiscovered
+    }
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
@@ -47,6 +50,7 @@ class AROverlay(context: Context, var locations: List<Secreto>, var discovered: 
         paint.color = Color.WHITE
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
         paint.textSize = 45f
+
 
         for(i in locations.indices){
             val currentLocationInECEF = LocationHelper.WSG84toECEF(currLocation!!)
