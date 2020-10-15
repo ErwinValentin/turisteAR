@@ -73,14 +73,14 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
     private var arOverlayView : AROverlay? = null
 
-    private val userSecretProvider = UserSecretProvider(this)
+    public val userSecretProvider = UserSecretProvider(this)
     private val secretProvider = SecretProvider(this)
 //    private val latlngList = mutableListOf<LocationData>()
     private var listaLlaves = mutableListOf<String>()
     private var listaDescubierto : List<Boolean> = listOf(false,false, false)
     private lateinit var listaDescubiertos: HashMap<Int, Boolean>
     private var listaSecretos = mutableListOf<Secreto>()
-    private val uId = FirebaseAuth.getInstance().uid.toString()
+    public val uId = FirebaseAuth.getInstance().uid.toString()
 
     private var trackLocations : Boolean = false
     var isGPSEnabled : Boolean = true
@@ -93,7 +93,8 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         setContentView(R.layout.camera_ar_layout)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        arOverlayView = AROverlay(this,listaSecretos, listaDescubierto)
+        markerLocation = intent.getStringExtra(getString(R.string.marker_location_key))!!
+        arOverlayView = AROverlay(this,listaSecretos, listaDescubierto,markerLocation)
 
         val lastLocation = fusedLocationProviderClient.lastLocation
         lastLocation.addOnSuccessListener { location ->
@@ -102,7 +103,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
             }
         }
 
-        markerLocation = intent.getStringExtra(getString(R.string.marker_location_key))!!
+
         for (i in 0..2) {
             listaLlaves.add(markerLocation + i)
         }
@@ -118,7 +119,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         camera_capture_button.setOnClickListener { takePhoto() }
         var scan = false
         var scannedCode = ""
-        qr_scan_button.setOnClickListener { button ->
+        qr_scan_button.setOnClickListener { _ ->
             if (!scan) {
                 scan = true
                 qr_scan_button.setImageResource(R.drawable.qr_white_cancel)
@@ -136,7 +137,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
                                 val loc = Location("")
                                 loc.latitude = secreto.latitud!!
                                 loc.longitude = secreto.longitud!!
-                                if (loc.distanceTo(currentLocation) < 50) {
+                                if (loc.distanceTo(currentLocation) < 20) {
                                     userSecretProvider.addSecretToDiscovered(uId, markerLocation, numero, listaSecretos[numero].nombre.toString())
                                 } else {
                                     Toast.makeText(this, "Este secreto esta muy lejos", Toast.LENGTH_SHORT).show()
@@ -424,7 +425,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
     private fun generateProjectionMatrix() {
         var cameraWidth = viewFinder.measuredWidth
         var cameraHeigth = viewFinder.measuredHeight
-        var ratio = 0f
+        var ratio : Float
         if (cameraWidth < cameraHeigth) {
             ratio = cameraWidth.toFloat() / cameraHeigth
         } else {

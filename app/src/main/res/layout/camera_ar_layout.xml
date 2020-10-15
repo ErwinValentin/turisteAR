@@ -18,10 +18,7 @@
             tools:layout_editor_absoluteY="16dp"
             android:visibility="visible">
         </androidx.camera.view.PreviewView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="HELLO"></TextView>
+
     </FrameLayout>
 
 

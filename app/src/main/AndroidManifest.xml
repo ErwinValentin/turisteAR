@@ -85,8 +85,6 @@
             android:parentActivityName=".activities.maps.MapsActivity"
             android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".activities.camera.QRCameraActivity" />
-        <activity android:name=".activities.history.UserFavorites" />
-        <activity android:name=".activities.camera.CameraLocationsActivity" />
 
     </application>
 
