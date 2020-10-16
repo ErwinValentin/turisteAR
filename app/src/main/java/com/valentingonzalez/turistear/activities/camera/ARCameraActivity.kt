@@ -300,15 +300,15 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
                 locationServiceAvailable = false
             }
             locationServiceAvailable = true
-            if (isNetworkEnabled) {
-                locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                        MIN_TIME_BW_UPDATES,
-                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
-                if (locationManager != null) {
-                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
-                    updateLatestLocation(currentLocation)
-                }
-            }
+//            if (isNetworkEnabled) {
+//                locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+//                        MIN_TIME_BW_UPDATES,
+//                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
+//                if (locationManager != null) {
+//                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
+//                    updateLatestLocation(currentLocation)
+//                }
+//            }
             if (isGPSEnabled) {
                 locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         MIN_TIME_BW_UPDATES,
@@ -365,8 +365,10 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
     override fun onSiteDiscoveredStatus(obtained: HashMap<Int, Boolean>) {
         listaDescubiertos = HashMap(obtained)
-        listaDescubierto = listaDescubiertos.values.toList()
-        Log.d("TESTDESC", listaDescubierto.size.toString()+ " "+listaDescubierto.toString())
+        if(listaDescubiertos.isNotEmpty()) {
+            listaDescubierto = listaDescubiertos.values.toList()
+        }
+//        Log.d("TESTDESC", listaDescubierto.size.toString()+ " "+listaDescubierto.toString())
         if(arOverlayView!= null) {
             arOverlayView!!.updateDiscovered(listaDescubierto)
         }
