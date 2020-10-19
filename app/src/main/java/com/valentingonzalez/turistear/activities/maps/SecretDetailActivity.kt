@@ -1,6 +1,7 @@
 package com.valentingonzalez.turistear.activities.maps
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,9 +18,11 @@ import com.valentingonzalez.turistear.providers.UserSecretProvider
 import com.valentingonzalez.turistear.includes.BasicToolbar.show
 import com.valentingonzalez.turistear.models.FavoritoUsuario
 import com.valentingonzalez.turistear.models.Usuario
+import java.util.*
+import kotlin.collections.HashMap
 
 
-class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, UserProvider.UserProviderListener, UserSecretProvider.UserSecrets{
+class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, UserProvider.UserProviderListener, UserSecretProvider.UserSecrets, SecretDetailAdapter.SecretListener, TextToSpeech.OnInitListener{
 
     private val secretProvider: SecretProvider = SecretProvider(this)
     private var siteProvider: SiteProvider = SiteProvider(null)
@@ -30,11 +33,14 @@ class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, Us
     private lateinit var obtainedList: HashMap<Int, Boolean>
     private lateinit var siteSecretsList: List<Secreto>
     private lateinit var secretsRecyclerView: RecyclerView
+    private lateinit var tts : TextToSpeech
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.item_list_layout)
         secretsRecyclerView = findViewById(R.id.recycler_view_item)
+        tts = TextToSpeech(this, this)
         show(this, "Secretos del Lugar", true)
         Log.d("Extras", intent.extras?.getString(getString(R.string.marker_location_key))!!)
         currLocation = intent.extras?.getString(getString(R.string.marker_location_key))!!
@@ -51,7 +57,7 @@ class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, Us
 
     override fun onFavoriteChecked(isFav: List<Boolean>) {
         Log.d("ACTIVITYFAVS",isFav.toString())
-        val adapter = SecretDetailAdapter(siteSecretsList, obtainedList, isFav, currLocation, userProvider)
+        val adapter = SecretDetailAdapter(siteSecretsList, obtainedList, isFav, currLocation, userProvider, this)
         secretsRecyclerView.adapter = adapter
         secretsRecyclerView.layoutManager = LinearLayoutManager(this)
         secretsRecyclerView.setHasFixedSize(true)
@@ -72,4 +78,19 @@ class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, Us
 
     }
 
+    override fun ttsDescription(description: String) {
+        tts.speak(description,TextToSpeech.QUEUE_FLUSH,null, "")
+    }
+
+    override fun onInit(status: Int) {
+        if(status == TextToSpeech.SUCCESS){
+            val result = tts.setLanguage(Locale.getDefault())
+        }
+    }
+
+    override fun onDestroy() {
+        tts.stop()
+        tts.shutdown()
+        super.onDestroy()
+    }
 }

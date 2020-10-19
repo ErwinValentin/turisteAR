@@ -2,6 +2,7 @@ package com.valentingonzalez.turistear.modal_sheets
 
 import android.content.Intent
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,17 +27,18 @@ import com.valentingonzalez.turistear.providers.UserSecretProvider
 import java.util.*
 import kotlin.collections.HashMap
 
-class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.UserSecrets, UserProvider.UserProviderListener{
+class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.UserSecrets, UserProvider.UserProviderListener, TextToSpeech.OnInitListener{
     private var siteProvider: SiteProvider = SiteProvider(null)
     private var userSecretProvider : UserSecretProvider = UserSecretProvider(this)
     private var userProvider: UserProvider = UserProvider(this)
     private var mFirebaseAuth: AuthProvider = AuthProvider()
     private var mStorage : StorageReference = FirebaseStorage.getInstance().reference
-
+    private lateinit var tts : TextToSpeech
 
     private lateinit var shareButton: ImageButton
     private lateinit var favoriteLocation: ImageButton
     private lateinit var ratingsButton : ImageButton
+    private lateinit var ttsButton : ImageButton
     private lateinit var secretAmountText: TextView
 
     private lateinit var currLocation: String
@@ -54,6 +56,10 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
         val showSecrets = layout.findViewById<ImageView>(R.id.show_secrets)
         val ratingView = layout.findViewById<TextView>(R.id.rating_location_value)
         secretAmountText = layout.findViewById(R.id.secrets_amount)
+
+        tts = TextToSpeech(context, this)
+        ttsButton = layout.findViewById(R.id.modal_tts_button)
+
         //val secretsAmount = layout.findViewById<TextView>(R.id.secrets_amount)
         //locationID = b?.getString("location").toString()
         val main_image = layout.findViewById<ImageView>(R.id.modal_location_main_image)
@@ -118,38 +124,11 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
             intent.putExtra(getString(R.string.marker_title), nombre)
             startActivity(intent)
         }
-        /*val userProvider = UserProvider()
-        userProvider.getUser(nv)*/
 
-     /*   val cameraButton : ImageButton = layout.findViewById(R.id.open_camera_here_button)
-        cameraButton.setOnClickListener{
-            startActivity( Intent(activity,CameraActivity1::class.java))
+        ttsButton.setOnClickListener{
+            tts.speak(descView.text.toString(), TextToSpeech.QUEUE_FLUSH, null, "")
         }
 
-        val icon1: ImageView = layout.findViewById<ImageView>(R.id.chest_icon1)
-        icon1.setOnClickListener {
-            Toast.makeText(activity,"Clicked Icon 1", Toast.LENGTH_SHORT).show()
-        }
-        val icon2: ImageView = layout.findViewById<ImageView>(R.id.chest_icon2)
-        icon2.setOnClickListener {
-            Toast.makeText(activity,"Clicked Icon 2", Toast.LENGTH_SHORT).show()
-        }
-        val icon3: ImageView = layout.findViewById<ImageView>(R.id.chest_icon3)
-        icon3.setOnClickListener {
-            Toast.makeText(activity,"Clicked Icon 3", Toast.LENGTH_SHORT).show()
-        }
-
-        val favoriteIcon: ImageView = layout.findViewById((R.id.favorite_location))
-        favoriteIcon.tag = 1
-        favoriteIcon.setOnClickListener{
-            if(it.tag==1){
-                favoriteIcon.setImageResource(R.drawable.ic_star_green_a700_24dp)
-                it.tag = 2
-            }else{
-                favoriteIcon.setImageResource(R.drawable.ic_star_border_light_green_600_24dp)
-                it.tag = 1
-            }
-        }*/
         return layout
     }
 
@@ -188,5 +167,20 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
 
     override fun onSecretDiscovered() {
 
+    }
+
+    override fun onInit(status: Int) {
+        if(status == TextToSpeech.SUCCESS){
+            val result = tts.setLanguage(Locale.getDefault())
+            ttsButton.isEnabled = true
+        }else{
+            ttsButton.isEnabled = false
+        }
+    }
+
+    override fun onDestroy() {
+        tts.stop()
+        tts.shutdown()
+        super.onDestroy()
     }
 }

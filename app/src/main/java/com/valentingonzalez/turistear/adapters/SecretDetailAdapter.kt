@@ -19,13 +19,22 @@ import java.util.*
 import kotlin.collections.HashMap
 
 
-class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtained: HashMap<Int, Boolean>, private val favorites: List<Boolean>, private val currLocation: String, private val userProvider: UserProvider) : Adapter<SecretDetailAdapter.ViewHolder>(){
+class SecretDetailAdapter(
+        private val secrets: List<Secreto>,
+        private val obtained: HashMap<Int, Boolean>,
+        private val favorites: List<Boolean>,
+        private val currLocation: String,
+        private val userProvider: UserProvider,
+        val ttsListener: SecretListener
+    )
+    : Adapter<SecretDetailAdapter.ViewHolder>(){
 
     class ViewHolder (view: View): RecyclerView.ViewHolder(view){
         val secretTitle : TextView = view.secret1_title
         val secretDescription : TextView = view.secret1_description
         val secretObtainedIcon : ImageView = view.secret1_obtained_status
         val secretFavorite : ImageView = view.secret1_favorite_button
+        val secretTTS : ImageView = view.secret1_tts_button
         val secretMainImage : ImageView = view.secret1_main_image
     }
 
@@ -53,12 +62,17 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
             holder.secretObtainedIcon.setImageResource(R.drawable.open_chest_v2_m)
             holder.secretTitle.text = currentItem.nombre
             holder.secretDescription.text = currentItem.descripcion
+            holder.secretTTS.visibility = View.VISIBLE
+            holder.secretTTS.setOnClickListener{
+                ttsListener.ttsDescription(currentItem.descripcion.toString())
+            }
         }else{
             holder.secretObtainedIcon.setImageResource(R.drawable.closed_chest_m)
             holder.secretMainImage.visibility = View.GONE
             holder.secretDescription.visibility = View.GONE
             holder.secretFavorite.visibility = View.INVISIBLE
             holder.secretTitle.text = "Secreto aún no descubierto"
+            holder.secretTTS.visibility = View.GONE
         }
         if(isFav) {
             holder.secretFavorite.setImageResource(R.drawable.ic_favorite_red_400_24dp)
@@ -81,5 +95,7 @@ class SecretDetailAdapter(private val secrets : List<Secreto>, private val obtai
             }
         }
     }
-
+    interface SecretListener{
+        fun ttsDescription(description: String)
+    }
 }

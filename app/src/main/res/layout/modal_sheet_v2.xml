@@ -93,6 +93,11 @@
             android:layout_height="48dp"
             android:src="@drawable/ic_favorite_border_black_24dp"
             android:id="@+id/modal_favorite_button"/>
+        <ImageButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_volume_up_black_24dp"
+            android:id="@+id/modal_tts_button"/>
     </LinearLayout>
 
     <ImageView

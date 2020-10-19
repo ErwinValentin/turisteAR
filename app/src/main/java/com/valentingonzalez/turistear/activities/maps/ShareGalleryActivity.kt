@@ -52,7 +52,7 @@ class ShareGalleryActivity: AppCompatActivity(), ImageSourcesProvider.ImageListe
         gridView = findViewById(R.id.grid_view)
 
         imageProvider.getPersonalImages(true, uid, siteId)
-        show(this@ShareGalleryActivity,"Imagenes de $siteName}",true)
+        show(this@ShareGalleryActivity,"Imagenes de $siteName",true)
     }
 
     override fun onImageObtained(images : List<StorageReference>) {
