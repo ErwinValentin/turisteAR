@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:padding="5dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/confirm_purchase_title"
+        android:text="¿Esta Seguro?"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/shop_item_description"
+        android:text="Item Description"/>
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:layout_gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/shop_item_price_text"
+            android:text="Item Price"
+            android:layout_gravity="fill"
+            android:layout_columnWeight="1"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/shop_item_current_text"
+            android:text="Current Balance"
+            android:layout_gravity="fill"
+            android:layout_columnWeight="1"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/shop_item_price"
+            android:text="100"
+            android:drawableStart="@drawable/ic_shopping_cart_black_24dp"
+            android:drawablePadding="3dp"
+            android:layout_gravity="fill"
+            android:layout_columnWeight="1"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/user_current_balance"
+            android:text="100"
+            android:drawableStart="@drawable/ic_shopping_cart_black_24dp"
+            android:drawablePadding="3dp"
+            android:layout_gravity="fill"
+            android:layout_columnWeight="1"
+            android:gravity="center"/>
+    </GridLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/shop_item_image"
+        android:src="@drawable/map_transparent"/>
+
+</LinearLayout>

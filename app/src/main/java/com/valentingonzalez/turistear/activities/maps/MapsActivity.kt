@@ -23,11 +23,8 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
-import com.valentingonzalez.turistear.fragments.MapFragment
+import com.valentingonzalez.turistear.fragments.*
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
-import com.valentingonzalez.turistear.fragments.RoutesFragment
-import com.valentingonzalez.turistear.fragments.UserFavoritesFragment
-import com.valentingonzalez.turistear.fragments.VisitedFragment
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
 import com.valentingonzalez.turistear.models.*
 import com.valentingonzalez.turistear.providers.UserProvider
@@ -53,6 +50,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
     private lateinit var userPoints: TextView
 
     private var userProvider = UserProvider(this)
+    var usuario: Usuario? = null
     private var searchDistance = 10
     private var searchTypes = ArrayList<String>(listOf())
     private var searchIncludes = ""
@@ -210,7 +208,9 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
                 fragmentTransaction.add(R.id.fragment_container, visFragment)
             }
             R.id.nav_menu_shop ->{
-                Toast.makeText(this, "Tienda proximamente", Toast.LENGTH_SHORT).show()
+                val shopFragment = ShopFragment(usuario!!)
+                fragmentTransaction.add(R.id.fragment_container, shopFragment)
+                //Toast.makeText(this, "Tienda proximamente", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_menu_settings->{
                 Toast.makeText(this, "Clicked on Settings", Toast.LENGTH_SHORT).show()
@@ -225,6 +225,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
     }
 
     override fun getUserName(user: Usuario) {
+        usuario = user
         currentLevel.text = user.nivelActual.toString()
         val toNextLevel = user.puntosTotales!!.rem(100)
         levelProgressBar.progress = toNextLevel

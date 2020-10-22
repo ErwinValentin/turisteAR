@@ -4,9 +4,7 @@ package com.valentingonzalez.turistear.adapters
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
 import android.view.*
@@ -19,26 +17,21 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import com.valentingonzalez.turistear.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.gallery_item_layout.view.*
 import java.io.File
-import java.io.FileOutputStream
 import java.lang.IllegalArgumentException
-import kotlin.Exception
 
-class GridAdapterv2(private val images : MutableList<Uri>, private val imageSource: MutableList<String> ,val  context: Context,val siteName: String) : Adapter<GridAdapterv2.ViewHolder>(){
+class ShareGridAdapter(private val images : MutableList<Uri>, private val imageSource: MutableList<String>, val  context: Context, val siteName: String) : Adapter<ShareGridAdapter.ViewHolder>(){
 
     private var multiSelect = false
     private var selectedItem : Uri? = null
     private var selectedCard : CardView? = null
     //private var items = arrayListOf<File>()
-    private var progessDialog: AlertDialog? = null
+    private var progressDialog: AlertDialog? = null
 
     private var actionMode: ActionMode? = null
     inner class  mActionMode : ActionMode.Callback {
@@ -46,8 +39,8 @@ class GridAdapterv2(private val images : MutableList<Uri>, private val imageSour
             when (item?.itemId) {
                 R.id.menu_share -> {
 
-                    progessDialog = SpotsDialog.Builder().setContext(context).setMessage("Descargando...").build()
-                    progessDialog!!.show()
+                    progressDialog = SpotsDialog.Builder().setContext(context).setMessage("Descargando...").build()
+                    progressDialog!!.show()
 
                     val outputDir = File(context.filesDir, "images")
                     if(!outputDir.exists()){
@@ -58,7 +51,7 @@ class GridAdapterv2(private val images : MutableList<Uri>, private val imageSour
                     val fbStorage = FirebaseStorage.getInstance().getReferenceFromUrl(selectedItem.toString())
                     fbStorage.getFile(temp).addOnSuccessListener {
                             if(temp.canRead()){
-                                progessDialog!!.dismiss()
+                                progressDialog!!.dismiss()
                             }
                     }
 

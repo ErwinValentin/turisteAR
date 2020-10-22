@@ -17,7 +17,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-@Suppress("UNUSED_PARAMETER")
 class SiteProvider(@Nullable var listener: SiteInterface?){
     private var mSiteReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Sitios")
     private var mSecretReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Secretos")

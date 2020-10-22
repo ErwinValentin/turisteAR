@@ -84,8 +84,6 @@
         <activity android:name=".activities.maps.SearchOptionsActivity"
             android:parentActivityName=".activities.maps.MapsActivity"
             android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".activities.camera.QRCameraActivity" />
-
     </application>
 
 </manifest>

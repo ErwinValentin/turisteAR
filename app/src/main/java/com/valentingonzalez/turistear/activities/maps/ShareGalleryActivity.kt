@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.StorageReference
 import com.valentingonzalez.turistear.R
-import com.valentingonzalez.turistear.adapters.GridAdapterv2
+import com.valentingonzalez.turistear.adapters.ShareGridAdapter
 import com.valentingonzalez.turistear.includes.BasicToolbar.show
 import com.valentingonzalez.turistear.providers.ImageSourcesProvider
 import java.io.File
@@ -32,7 +32,7 @@ class ShareGalleryActivity: AppCompatActivity(), ImageSourcesProvider.ImageListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.share_image_gallery)
+        setContentView(R.layout.grid_item_layout)
         // Get the files/ subdirectory of internal storage
         privateRootDir = filesDir
         // Get the files/images subdirectory;
@@ -41,7 +41,7 @@ class ShareGalleryActivity: AppCompatActivity(), ImageSourcesProvider.ImageListe
             imagesDir.mkdirs()
         }
         // Get the files in the images subdirectory
-        imageFiles = imagesDir.listFiles()
+        imageFiles = imagesDir.listFiles()!!
         // Set the Activity's result to null to begin with
         setResult(Activity.RESULT_CANCELED, null)
 
@@ -57,7 +57,7 @@ class ShareGalleryActivity: AppCompatActivity(), ImageSourcesProvider.ImageListe
 
     override fun onImageObtained(images : List<StorageReference>) {
 
-        val adapter = GridAdapterv2(imagesURLs, imagesSrc, this, siteName)
+        val adapter = ShareGridAdapter(imagesURLs, imagesSrc, this, siteName)
 
         gridView.adapter = adapter
         val userId = FirebaseAuth.getInstance().currentUser!!.uid

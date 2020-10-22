@@ -1,14 +1,23 @@
 package com.valentingonzalez.turistear.providers
 
 import android.util.Log
+import androidx.annotation.Nullable
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.valentingonzalez.turistear.models.FavoritoUsuario
+import com.valentingonzalez.turistear.models.ShopItem
 import com.valentingonzalez.turistear.models.Usuario
 import java.util.*
 
-class UserProvider(private var listener : UserProviderListener) {
+class UserProvider {
+    private var listener: Any
+    constructor(listener: UserProviderListener){
+        this.listener = listener
+    }
+    constructor(listener : UserShopItemsListener){
+        this.listener = listener
+    }
     var mUserReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Usuarios")
     fun createUser(usuario: Usuario): Task<Void> {
         val map: MutableMap<String, Any?> = HashMap()
@@ -26,7 +35,7 @@ class UserProvider(private var listener : UserProviderListener) {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val u = snapshot.getValue(Usuario::class.java)!!
                 Log.d("Usuario", u.toString())
-                listener.getUserName(u)
+                (listener as UserProviderListener).getUserName(u)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -64,7 +73,7 @@ class UserProvider(private var listener : UserProviderListener) {
                         for(fav in snapshot.children){
                             fav.getValue(FavoritoUsuario::class.java)?.let { favoritos.add(it) }
                         }
-                        listener.getAllFavorites(favoritos)
+                        (listener as UserProviderListener).getAllFavorites(favoritos)
                     }
                 })
     }
@@ -94,14 +103,35 @@ class UserProvider(private var listener : UserProviderListener) {
                                 }
                             }
                         }
-                        listener.onFavoriteChecked(favorites)
+                        (listener as UserProviderListener).onFavoriteChecked(favorites)
                     }
 
                 })
+    }
+    fun purchaseItem(shopItem: ShopItem){
+        val reference = mUserReference.child(FirebaseAuth.getInstance().uid.toString())
+        reference.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val usuario = snapshot.getValue(Usuario::class.java)
+                if(usuario != null){
+                    usuario.puntosActuales = usuario.puntosActuales!!.minus(shopItem.precio!!.toInt())
+                    reference.setValue(usuario)
+                    reference.child("objetos").push().setValue(shopItem)
+                    (listener as UserShopItemsListener).itemPurchased(shopItem)
+                }
+            }
+
+        })
     }
     interface UserProviderListener {
         fun onFavoriteChecked(isFav : List<Boolean>)
         fun getUserName(user: Usuario)
         fun getAllFavorites(favoritos: List<FavoritoUsuario>)
+    }
+    interface UserShopItemsListener{
+        fun itemPurchased(shopItem: ShopItem)
     }
 }
