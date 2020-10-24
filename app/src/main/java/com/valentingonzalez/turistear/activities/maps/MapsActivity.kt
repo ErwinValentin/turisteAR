@@ -137,7 +137,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
         argumentsBundle.putInt("SECRETO", numSecreto)
         argumentsBundle.putSerializable("RUTA", rutaSeleccionada)
         mapFragment.arguments = argumentsBundle
-        fragmentTransaction.add(R.id.fragment_container, mapFragment)
+        fragmentTransaction.add(R.id.fragment_container, mapFragment).addToBackStack("MapFragment")
         fragmentTransaction.commit()
     }
 
@@ -157,17 +157,22 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
     }
 
     override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount == 1) {
 
-        val dialog = AlertDialog.Builder(this)
-        dialog.setMessage("¿Desea cerrar sesión y salir del app?")
-                .setPositiveButton("Cerrar"){_ ,_ ->
-                    FirebaseAuth.getInstance().signOut()
-                    //startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
-                }.setNegativeButton("Cancelar"){dialog, _ ->
-                    dialog.cancel()
-                }
-        dialog.show()
+            val dialog = AlertDialog.Builder(this)
+            dialog.setMessage("¿Desea cerrar sesión y salir del app?")
+                    .setPositiveButton("Cerrar") { _, _ ->
+                        FirebaseAuth.getInstance().signOut()
+                        //startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }.setNegativeButton("Cancelar") { dialog, _ ->
+                        dialog.cancel()
+                    }
+            dialog.show()
+        }else{
+            super.onBackPressed()
+        }
+
     }
 
     override fun markerClicked(sitio: Sitio?, key: String) {
@@ -204,21 +209,20 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
             }
             R.id.nav_menu_route ->{
                 val routeFragment = RoutesFragment()
-                fragmentTransaction.add(R.id.fragment_container, routeFragment)
+                fragmentTransaction.add(R.id.fragment_container, routeFragment).addToBackStack("NavFragment")
             }
             R.id.nav_menu_favs->{
                 val favFragment = UserFavoritesFragment()
                 favFragment.arguments = argumentsBundle
-                fragmentTransaction.add(R.id.fragment_container, favFragment)
-
+                fragmentTransaction.add(R.id.fragment_container, favFragment).addToBackStack("FavFragment")
             }
             R.id.nav_menu_visited->{
                 val visFragment = VisitedFragment(FirebaseAuth.getInstance().uid.toString())
-                fragmentTransaction.add(R.id.fragment_container, visFragment)
+                fragmentTransaction.add(R.id.fragment_container, visFragment).addToBackStack("VisFragment")
             }
             R.id.nav_menu_shop ->{
                 val shopFragment = ShopFragment()
-                fragmentTransaction.add(R.id.fragment_container, shopFragment)
+                fragmentTransaction.add(R.id.fragment_container, shopFragment).addToBackStack("ShopFragment")
                 //Toast.makeText(this, "Tienda proximamente", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_menu_settings->{
