@@ -66,7 +66,6 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
         currLocation = b?.getString(getString(R.string.marker_location_key))!!
         imageSrc = b.getString(getString(R.string.marker_image))!!
         val dlPath = mStorage.child(currLocation+"/"+imageSrc)
-        Log.d("IMAGE", dlPath.toString())
         dlPath.downloadUrl.addOnSuccessListener {
             Picasso.get()
                     .load(it)
@@ -149,7 +148,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
         }
     }
 
-    override fun getUserName(user: Usuario) {
+    override fun getUser(user: Usuario) {
     }
 
     override fun getAllFavorites(favoritos: List<FavoritoUsuario>) {

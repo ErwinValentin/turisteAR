@@ -14,30 +14,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/shop_item_description"
-        android:text="Item Description"/>
+        android:text="Item Description"
+        style="@style/title"/>
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:columnCount="2"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:padding="10dp">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/shop_item_price_text"
-            android:text="Item Price"
+            android:text="Precio del Objeto"
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
-            android:gravity="center" />
+            android:gravity="center"
+            android:padding="5dp"
+            android:background="@drawable/rectangle_border"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/shop_item_current_text"
-            android:text="Current Balance"
+            android:text="Puntos despues de la compra"
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:padding="5dp"
+            android:background="@drawable/rectangle_border"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/shop_item_price"
             android:text="100"
@@ -45,9 +51,11 @@
             android:drawablePadding="3dp"
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:padding="5dp"
+            android:background="@drawable/rectangle_border"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/user_current_balance"
             android:text="100"
@@ -55,7 +63,9 @@
             android:drawablePadding="3dp"
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:padding="5dp"
+            android:background="@drawable/rectangle_border"/>
     </GridLayout>
 
     <ImageView

@@ -37,7 +37,7 @@
                 android:gravity="center"
                 android:textColor="#fff"
                 android:textSize="20sp"
-                android:background="@drawable/border_shape"
+                android:background="@drawable/rounded_border_shape"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/level_progress_text"
                 app:layout_constraintStart_toEndOf="@id/toolbar_account_icon"

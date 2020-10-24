@@ -1,7 +1,6 @@
 package com.valentingonzalez.turistear.providers
 
 import android.util.Log
-import androidx.annotation.Nullable
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -35,7 +34,11 @@ class UserProvider {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val u = snapshot.getValue(Usuario::class.java)!!
                 Log.d("Usuario", u.toString())
-                (listener as UserProviderListener).getUserName(u)
+                if(listener is UserProviderListener){
+                    (listener as UserProviderListener).getUser(u)
+                }else{
+                    (listener as UserShopItemsListener).getUser(u)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -128,10 +131,11 @@ class UserProvider {
     }
     interface UserProviderListener {
         fun onFavoriteChecked(isFav : List<Boolean>)
-        fun getUserName(user: Usuario)
+        fun getUser(user: Usuario)
         fun getAllFavorites(favoritos: List<FavoritoUsuario>)
     }
     interface UserShopItemsListener{
         fun itemPurchased(shopItem: ShopItem)
+        fun getUser(user: Usuario)
     }
 }

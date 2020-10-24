@@ -23,6 +23,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.valentingonzalez.turistear.R
+import com.valentingonzalez.turistear.activities.login.LoginActivity
 import com.valentingonzalez.turistear.fragments.*
 import com.valentingonzalez.turistear.fragments.MapFragment.MarkerClickedListener
 import com.valentingonzalez.turistear.modal_sheets.LocationInfoModalSheet
@@ -156,9 +157,17 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        //TODO dialogo de confirmacion
-        FirebaseAuth.getInstance().signOut()
+
+        val dialog = AlertDialog.Builder(this)
+        dialog.setMessage("¿Desea cerrar sesión y salir del app?")
+                .setPositiveButton("Cerrar"){_ ,_ ->
+                    FirebaseAuth.getInstance().signOut()
+                    //startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                }.setNegativeButton("Cancelar"){dialog, _ ->
+                    dialog.cancel()
+                }
+        dialog.show()
     }
 
     override fun markerClicked(sitio: Sitio?, key: String) {
@@ -208,7 +217,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
                 fragmentTransaction.add(R.id.fragment_container, visFragment)
             }
             R.id.nav_menu_shop ->{
-                val shopFragment = ShopFragment(usuario!!)
+                val shopFragment = ShopFragment()
                 fragmentTransaction.add(R.id.fragment_container, shopFragment)
                 //Toast.makeText(this, "Tienda proximamente", Toast.LENGTH_SHORT).show()
             }
@@ -224,7 +233,7 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
     override fun onFavoriteChecked(isFav: List<Boolean>) {
     }
 
-    override fun getUserName(user: Usuario) {
+    override fun getUser(user: Usuario) {
         usuario = user
         currentLevel.text = user.nivelActual.toString()
         val toNextLevel = user.puntosTotales!!.rem(100)

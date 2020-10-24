@@ -29,14 +29,14 @@ class AddReviewDialogFragment : DialogFragment(){
             val builder = AlertDialog.Builder(it)
             val inflater = requireActivity().layoutInflater
             builder.setView(inflater.inflate(R.layout.rating_dialog_layout, null))
-                    .setPositiveButton("Agregar", DialogInterface.OnClickListener{dialog, id ->
+                    .setPositiveButton("Agregar") { dialog, _ ->
                         val titleTv = (dialog as AlertDialog).findViewById<TextInputEditText>(R.id.review_title_tiet)
                         val commentTv = (dialog).findViewById<TextInputEditText>(R.id.review_comment_tiet)
                         val ratingBar = (dialog).findViewById<RatingBar>(R.id.ratingBar)
                         mListener.onDialogPositiveClick(titleTv.text.toString(), commentTv.text.toString(), ratingBar.rating)
-                    })
-                    .setNegativeButton("Cancelar") { dialog, id ->
-                        getDialog()?.cancel()
+                    }
+                    .setNegativeButton("Cancelar") { dialog , _ ->
+                        dialog.cancel()
                     }
             builder.create()
         }?: throw IllegalStateException("Activity cannot be null")

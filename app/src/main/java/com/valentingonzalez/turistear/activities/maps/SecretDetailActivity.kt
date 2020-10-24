@@ -63,7 +63,7 @@ class SecretDetailActivity : AppCompatActivity(), SecretProvider.SiteSecrets, Us
         secretsRecyclerView.setHasFixedSize(true)
     }
 
-    override fun getUserName(user: Usuario) {
+    override fun getUser(user: Usuario) {
     }
 
     override fun getAllFavorites(favoritos: List<FavoritoUsuario>) {
