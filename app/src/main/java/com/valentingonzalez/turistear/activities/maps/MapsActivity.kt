@@ -225,6 +225,10 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
                 fragmentTransaction.add(R.id.fragment_container, shopFragment).addToBackStack("ShopFragment")
                 //Toast.makeText(this, "Tienda proximamente", Toast.LENGTH_SHORT).show()
             }
+            R.id.nav_menu_user_items -> {
+                val userItemsFragment = UserBoughtItemsFragment()
+                fragmentTransaction.add(R.id.fragment_container, userItemsFragment).addToBackStack("ShopFragment")
+            }
             R.id.nav_menu_settings->{
                 Toast.makeText(this, "Clicked on Settings", Toast.LENGTH_SHORT).show()
             }

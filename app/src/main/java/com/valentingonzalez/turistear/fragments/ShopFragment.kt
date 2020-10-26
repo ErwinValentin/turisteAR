@@ -54,8 +54,6 @@ class ShopFragment : Fragment(), ShopGridAdapter.ShopInterface, ShopProvider.Sho
     override fun onItemSelected(shopItem: ShopItem) {
         if(!userItems.contains(shopItem)) {
             if (usuario.puntosActuales!! >= shopItem.precio!!) {
-                //TODO dialogo de confimacion
-
                 val dialogBuilder = AlertDialog.Builder(context)
                 val inflater = requireActivity().layoutInflater
 

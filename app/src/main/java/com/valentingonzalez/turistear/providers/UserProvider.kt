@@ -126,7 +126,22 @@ class UserProvider {
                     (listener as UserShopItemsListener).itemPurchased(shopItem)
                 }
             }
+        })
+    }
 
+    fun useItem(shopItem: ShopItem){
+        val reference = mUserReference.child(FirebaseAuth.getInstance().uid.toString()).child("objetos")
+        reference.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+            }
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(objetos in snapshot.children) {
+                    val objeto = objetos.getValue(ShopItem::class.java)
+                    if (objeto!! == shopItem) {
+                        reference.child(objetos.key!!).removeValue()
+                    }
+                }
+            }
         })
     }
     interface UserProviderListener {

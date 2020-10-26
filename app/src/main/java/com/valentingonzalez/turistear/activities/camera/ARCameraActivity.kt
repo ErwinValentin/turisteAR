@@ -198,8 +198,7 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
                 //val saverUri = Uri.fromFile(photoFile)
                 val msg = "Foto tomada exitosamente, guardando en linea..."
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-//                Log.d(TAG, msg)
-                //TODO mover a servicio aparte para guardar en el fondo, aun si cierran la aplicacion
+
                 uploadToFirebase(photoFile)
             }
         })

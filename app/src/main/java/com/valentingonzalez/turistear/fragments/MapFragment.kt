@@ -60,7 +60,6 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
 
     override fun onAttach(context: Context) {
-        //TODO receive marker options and display the correct markers
         super.onAttach(context)
         try {
             mListener = context as MarkerClickedListener
