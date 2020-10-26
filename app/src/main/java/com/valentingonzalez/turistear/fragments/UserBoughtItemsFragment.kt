@@ -2,6 +2,7 @@ package com.valentingonzalez.turistear.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,6 +53,8 @@ class UserBoughtItemsFragment : Fragment(), UserItemsGridAdapter.UserItemsInterf
         dialogBuilder.setTitle("Usar Objeto")
         dialogBuilder.setPositiveButton("Usar"){ _ , _ ->
             userProvider.useItem(shopItem)
+            itemsAdapter!!.userItems.remove(shopItem)
+            gridView.adapter?.notifyDataSetChanged()
         }.setNegativeButton("Cancelar"){ dialog , _ ->
             dialog.cancel()
         }
@@ -59,12 +62,13 @@ class UserBoughtItemsFragment : Fragment(), UserItemsGridAdapter.UserItemsInterf
     }
     override fun onShopItemsObtained(items: List<ShopItem>) {
     }
-
     override fun onUserItemsObtained(items: List<ShopItem>) {
         userItems.clear()
         userItems.addAll(items)
+        Log.d("USUARIO_OBJETOS", userItems.toString())
         itemsAdapter = UserItemsGridAdapter(userItems, this, FirebaseStorage.getInstance())
         gridView.adapter = itemsAdapter
+        gridView.layoutManager = GridLayoutManager(context, 3)
         gridView.adapter?.notifyDataSetChanged()
     }
 

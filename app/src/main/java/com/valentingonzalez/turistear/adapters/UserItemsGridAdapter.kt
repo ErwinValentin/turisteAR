@@ -15,15 +15,15 @@ import com.squareup.picasso.Picasso
 import com.valentingonzalez.turistear.R
 import com.valentingonzalez.turistear.models.ShopItem
 
-class UserItemsGridAdapter (var userItems : List<ShopItem>, val listener: UserItemsInterface, val storage: FirebaseStorage) : Adapter<UserItemsGridAdapter.ViewHolder>(){
+class UserItemsGridAdapter (var userItems : MutableList<ShopItem>, val listener: UserItemsInterface, val storage: FirebaseStorage) : Adapter<UserItemsGridAdapter.ViewHolder>(){
 
     class ViewHolder (var view: View): RecyclerView.ViewHolder(view){
         var card : CardView = view.findViewById(R.id.shop_item_card)
-        var linearLayout : LinearLayout = view.findViewById(R.id.item_layout)
         var title : TextView = view.findViewById(R.id.shop_item_title)
         var price : TextView = view.findViewById(R.id.shop_item_price)
         var icon : ImageView = view.findViewById(R.id.shop_item_image)
         val layout : LinearLayout = view.findViewById(R.id.item_layout)
+        var priceLayout : LinearLayout = view.findViewById(R.id.price_linear_layout)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,11 +36,8 @@ class UserItemsGridAdapter (var userItems : List<ShopItem>, val listener: UserIt
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        holder.priceLayout.visibility = View.GONE
         val currentItem = userItems[position]
-        if(userItems.contains(currentItem)){
-            holder.linearLayout.setBackgroundColor(Color.LTGRAY)
-        }
         holder.layout.setOnClickListener{
             listener.onItemSelected(currentItem)
         }
@@ -51,7 +48,7 @@ class UserItemsGridAdapter (var userItems : List<ShopItem>, val listener: UserIt
                     .into(holder.icon)
         }
 
-        holder.title.text = currentItem.nombre
+        holder.title.text = currentItem.nombre +"\n"+ currentItem.descripcion
         holder.price.text = currentItem.precio.toString()
     }
 
