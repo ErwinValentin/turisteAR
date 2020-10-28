@@ -57,7 +57,8 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
 
     var marcadores: HashMap<Marker,Sitio> = HashMap()
     val userId = FirebaseAuth.getInstance().uid!!
-
+    var markerKey : String =""
+    var markerName : String = ""
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -195,9 +196,10 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
         loc.latitude = marker.position.latitude
         Log.d("DISTANCIA",currentLocation.distanceTo(loc).toString())
         mListener!!.markerClicked(marcadores[marker], marker.tag.toString())
+        markerKey = marker.tag.toString()
+        markerName = marker.title
         if((currentLocation.distanceTo(loc))<100){
-            siteProvider.addSiteToDiscovered(marker.tag.toString(), userId, marker.title, Calendar.getInstance().time.toString(), true)
-            Toast.makeText(context,  "¡Has descubierto un sitio nuevo!", Toast.LENGTH_SHORT).show()
+            siteProvider.getDiscoveredSites(userId)
         }
         return false
     }
@@ -207,6 +209,13 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, OnMarkerClickListe
     }
 
     override fun userDiscovered(list: List<SitioDescubierto>) {
+        for(sitio in list){
+            if(sitio.llave == markerKey){
+                return
+            }
+        }
+        siteProvider.addSiteToDiscovered(markerKey, userId, markerName, Calendar.getInstance().time.toString(), true)
+        Toast.makeText(context,  "¡Has descubierto un sitio nuevo!", Toast.LENGTH_SHORT).show()
     }
 
     override fun listReady() {

@@ -56,10 +56,10 @@ class AROverlay(context: Context, var locations: List<Secreto>, var discovered: 
                     }else{
                         if(distances[i] < 20f){
                             (context as ARCameraActivity).userSecretProvider.addSecretToDiscovered(FirebaseAuth.getInstance().uid!!, location, i, locations[i].nombre!!)
-                            startSecretDetailActivity()
+                            //startSecretDetailActivity()
                         }
                     }
-                    //Toast.makeText(context,locations[i].nombre,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,locations[i].nombre,Toast.LENGTH_SHORT).show()
                 }
             }
         }
