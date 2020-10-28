@@ -229,9 +229,9 @@ class MapsActivity : AppCompatActivity(), MarkerClickedListener,
                 val userItemsFragment = UserBoughtItemsFragment()
                 fragmentTransaction.add(R.id.fragment_container, userItemsFragment).addToBackStack("ItemFragment")
             }
-            R.id.nav_menu_settings->{
-                Toast.makeText(this, "Clicked on Settings", Toast.LENGTH_SHORT).show()
-            }
+//            R.id.nav_menu_settings->{
+//                Toast.makeText(this, "Clicked on Settings", Toast.LENGTH_SHORT).show()
+//            }
         }
         fragmentTransaction.commit()
         drawerLayout.closeDrawer(GravityCompat.START)

@@ -59,7 +59,7 @@ class AROverlay(context: Context, var locations: List<Secreto>, var discovered: 
                             startSecretDetailActivity()
                         }
                     }
-                    Toast.makeText(context,locations[i].nombre,Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(context,locations[i].nombre,Toast.LENGTH_SHORT).show()
                 }
             }
         }

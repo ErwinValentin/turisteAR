@@ -17,6 +17,7 @@ import android.net.Uri
 import android.opengl.Matrix
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.util.Size
 import android.view.Surface
@@ -31,8 +32,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -48,6 +48,7 @@ import com.valentingonzalez.turistear.providers.SecretProvider
 import com.valentingonzalez.turistear.providers.UserSecretProvider
 import kotlinx.android.synthetic.main.camera_ar_layout.*
 import kotlinx.android.synthetic.main.camera_ar_location_viewer.*
+import kotlinx.android.synthetic.main.search_options_layout.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -63,6 +64,10 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
     private lateinit var markerLocation: String
     private lateinit var currentLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
+
+
     private lateinit var sensorManager: SensorManager
     private var locationManager : LocationManager?= null
     private val  MIN_DISTANCE_CHANGE_FOR_UPDATES = 0L // 10 meters
@@ -96,6 +101,18 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         markerLocation = intent.getStringExtra(getString(R.string.marker_location_key))!!
         arOverlayView = AROverlay(this,listaSecretos, listaDescubierto,markerLocation)
 
+        locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 1000
+
+        locationCallback = object : LocationCallback(){
+            override fun onLocationResult(p0: LocationResult?) {
+                p0 ?: return
+                for(location in p0.locations){
+                    updateLatestLocation(location)
+                }
+            }
+        }
         val lastLocation = fusedLocationProviderClient.lastLocation
         lastLocation.addOnSuccessListener { location ->
             if(location != null){
@@ -161,13 +178,13 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
             trackLocations = !trackLocations
             if(trackLocations){
                 show_locations_button.setImageResource(R.drawable.cancel_location_sm)
+                startLocationUpdates()
                 registerSensors()
-                initLocationService()
                 initAROverlay()
             }else{
                 show_locations_button.setImageResource(R.drawable.ic_location_on_white_24dp)
+                stopLocationUpdates()
                 removeSensor()
-                stopLocationService()
                 removeAROverlay()
             }
 
@@ -299,15 +316,15 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
                 locationServiceAvailable = false
             }
             locationServiceAvailable = true
-//            if (isNetworkEnabled) {
-//                locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-//                        MIN_TIME_BW_UPDATES,
-//                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
-//                if (locationManager != null) {
-//                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
-//                    updateLatestLocation(currentLocation)
-//                }
-//            }
+            if (isNetworkEnabled) {
+                locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
+                if (locationManager != null) {
+                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
+                    updateLatestLocation(currentLocation)
+                }
+            }
             if (isGPSEnabled) {
                 locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         MIN_TIME_BW_UPDATES,
@@ -323,6 +340,12 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
     }
     private fun stopLocationService(){
         locationManager!!.removeUpdates(this)
+    }
+    private fun startLocationUpdates(){
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+    }
+    private fun stopLocationUpdates(){
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
     private fun updateLatestLocation(p0: Location?) {
         if (arOverlayView != null && p0 != null) {

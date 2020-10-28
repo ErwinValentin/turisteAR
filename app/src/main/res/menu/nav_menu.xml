@@ -27,11 +27,11 @@
             android:icon="@drawable/ic_card_travel_black_24dp"
             android:title="Ver tus objetos actuales"/>
     </group>
-    <group android:id="@+id/settings">
-        <item android:id="@+id/nav_menu_settings"
-            android:icon="@drawable/ic_settings_black_24dp"
-            android:title="Configuraciones"/>
-    </group>
+<!--    <group android:id="@+id/settings">-->
+<!--        <item android:id="@+id/nav_menu_settings"-->
+<!--            android:icon="@drawable/ic_settings_black_24dp"-->
+<!--            android:title="Configuraciones"/>-->
+<!--    </group>-->
 
 
 </menu>
