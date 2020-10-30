@@ -26,7 +26,7 @@ class RoutesProvider (private val listener : RoutesInterface){
         })
     }
 
-    public interface RoutesInterface{
+    interface RoutesInterface{
         fun getRoutes(rutas: List<Ruta>)
     }
 }

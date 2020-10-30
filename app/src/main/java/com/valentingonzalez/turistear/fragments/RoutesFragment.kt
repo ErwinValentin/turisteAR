@@ -55,7 +55,7 @@ class RoutesFragment: Fragment(), RoutesProvider.RoutesInterface, RouteAdapter.R
         routesListener!!.routeSelected(ruta)
     }
 
-    public interface RouteFragmentInterface{
+    interface RouteFragmentInterface{
         fun routeSelected(ruta: Ruta)
     }
 }

@@ -78,14 +78,14 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
     private var arOverlayView : AROverlay? = null
 
-    public val userSecretProvider = UserSecretProvider(this)
+    val userSecretProvider = UserSecretProvider(this)
     private val secretProvider = SecretProvider(this)
 //    private val latlngList = mutableListOf<LocationData>()
     private var listaLlaves = mutableListOf<String>()
     private var listaDescubierto : List<Boolean> = listOf(false,false, false)
     private lateinit var listaDescubiertos: HashMap<Int, Boolean>
     private var listaSecretos = mutableListOf<Secreto>()
-    public val uId = FirebaseAuth.getInstance().uid.toString()
+    val uId = FirebaseAuth.getInstance().uid.toString()
 
     private var trackLocations : Boolean = false
     var isGPSEnabled : Boolean = true
@@ -127,7 +127,6 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
 
         secretProvider.getSecrets(markerLocation)
         userSecretProvider.getSiteDiscoveredSecrets(uId, markerLocation)
-//        secretProvider.getSecretKeys(currLocation)
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -143,11 +142,9 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
                 imageAnalyzer.setAnalyzer(Executors.newSingleThreadExecutor(), BarcodeAnalyzer {
                     if (scannedCode != it) {
                         scannedCode = it
-                        Log.d("CODIGO", it)
-                        Log.d("LISTA CONTIENE", listaLlaves.contains(it).toString())
                         if (listaLlaves.contains(it)) {
                             var numero = it.substring(it.length - 1).toInt()
-                            if (listaDescubiertos[numero] != null) {
+                            if (listaDescubiertos[numero] != false) {
                                 Toast.makeText(this, "Ya has descubierto este secreto", Toast.LENGTH_SHORT).show()
                             } else {
                                 val secreto = listaSecretos[numero]
@@ -300,47 +297,47 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
             mediaDir else filesDir
     }
 
-    private fun initLocationService() {
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-        try {
-            locationManager = (this.getSystemService(Context.LOCATION_SERVICE) as LocationManager)
-
-            // Get GPS and network status
-            isGPSEnabled = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            isNetworkEnabled = locationManager!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-            if (!isNetworkEnabled && !isGPSEnabled) {
-                // cannot get location
-                locationServiceAvailable = false
-            }
-            locationServiceAvailable = true
-            if (isNetworkEnabled) {
-                locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                        MIN_TIME_BW_UPDATES,
-                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
-                if (locationManager != null) {
-                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
-                    updateLatestLocation(currentLocation)
-                }
-            }
-            if (isGPSEnabled) {
-                locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                        MIN_TIME_BW_UPDATES,
-                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
-                if (locationManager != null) {
-                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
-                    updateLatestLocation(currentLocation)
-                }
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-    private fun stopLocationService(){
-        locationManager!!.removeUpdates(this)
-    }
+//    private fun initLocationService() {
+//        if (Build.VERSION.SDK_INT >= 23 &&
+//                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return
+//        }
+//        try {
+//            locationManager = (this.getSystemService(Context.LOCATION_SERVICE) as LocationManager)
+//
+//            // Get GPS and network status
+//            isGPSEnabled = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+//            isNetworkEnabled = locationManager!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+//            if (!isNetworkEnabled && !isGPSEnabled) {
+//                // cannot get location
+//                locationServiceAvailable = false
+//            }
+//            locationServiceAvailable = true
+//            if (isNetworkEnabled) {
+//                locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+//                        MIN_TIME_BW_UPDATES,
+//                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
+//                if (locationManager != null) {
+//                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
+//                    updateLatestLocation(currentLocation)
+//                }
+//            }
+//            if (isGPSEnabled) {
+//                locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+//                        MIN_TIME_BW_UPDATES,
+//                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this)
+//                if (locationManager != null) {
+//                    currentLocation = locationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
+//                    updateLatestLocation(currentLocation)
+//                }
+//            }
+//        } catch (ex: Exception) {
+//            ex.printStackTrace()
+//        }
+//    }
+//    private fun stopLocationService(){
+//        locationManager!!.removeUpdates(this)
+//    }
     private fun startLocationUpdates(){
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
@@ -363,14 +360,14 @@ class ARCameraActivity : AppCompatActivity(), UserSecretProvider.UserSecrets, Se
         sensorManager.unregisterListener(this)
     }
     fun initAROverlay(){
-        if (arOverlayView!!.getParent() != null) {
-            (arOverlayView!!.getParent() as ViewGroup).removeView(arOverlayView)
+        if (arOverlayView!!.parent != null) {
+            (arOverlayView!!.parent as ViewGroup).removeView(arOverlayView)
         }
         frame_container.addView(arOverlayView)
     }
     fun removeAROverlay(){
-        if (arOverlayView!!.getParent() != null) {
-            (arOverlayView!!.getParent() as ViewGroup).removeView(arOverlayView)
+        if (arOverlayView!!.parent != null) {
+            (arOverlayView!!.parent as ViewGroup).removeView(arOverlayView)
         }
     }
     override fun onDestroy() {

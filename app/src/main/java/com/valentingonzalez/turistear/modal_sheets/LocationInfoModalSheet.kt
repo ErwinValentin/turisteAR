@@ -84,7 +84,7 @@ class LocationInfoModalSheet : BottomSheetDialogFragment(), UserSecretProvider.U
         nombre = b.getString(getString(R.string.marker_title))!!
         Log.d("SITERATINGMODAL", b.getDouble(getString(R.string.marker_location_rating)).toString())
         val rate = b.getDouble(getString(R.string.marker_location_rating))
-        ratingView.setText("Rating $rate")
+        ratingView.text = "Rating $rate"
         //rating_location_value.text = "Rating ${b.getDouble(getString(R.string.marker_location_rating))}"
         titleView.text = nombre
         descView.text = b.getString(getString(R.string.marker_description))

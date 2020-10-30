@@ -11,7 +11,7 @@
             android:title="Ver Rutas de Viaje"
             />
     </group>
-    <group>
+    <group android:id="@+id/user_history">
         <item android:id="@+id/nav_menu_favs"
             android:icon="@drawable/ic_favorite_border_black_24dp"
             android:title="Mis Favoritos"/>
@@ -19,7 +19,7 @@
             android:icon="@drawable/ic_location_on_black_24dp"
             android:title="Sitios Visitados"/>
     </group>
-    <group>
+    <group android:id="@+id/shop_menu_items">
         <item android:id="@+id/nav_menu_shop"
             android:icon="@drawable/ic_shopping_cart_black_24dp"
             android:title="Visitar tienda de puntos"/>

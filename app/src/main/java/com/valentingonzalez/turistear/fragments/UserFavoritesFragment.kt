@@ -52,7 +52,7 @@ class UserFavoritesFragment : Fragment(), SiteProvider.SiteInterface, FavoriteIt
     }
 
     interface FavoriteFragmentInterface{
-        fun onFavoriteSelected(locationKey: String, secretNumber: Int);
+        fun onFavoriteSelected(locationKey: String, secretNumber: Int)
         fun gotoFavorite(favorite: FavoritoUsuario)
     }
 
