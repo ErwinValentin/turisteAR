@@ -46,11 +46,11 @@
             />
 
         <activity
-            android:name=".activities.maps.MapsActivity"
+            android:name="com.valentingonzalez.turistear.features.map.MapsActivity"
             android:label="@string/title_activity_maps">
         </activity>
         <activity
-            android:name=".activities.login.LoginActivity"
+            android:name=".features.login.LoginActivity"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,16 +60,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.login.RegisterActivity"
-            android:parentActivityName=".activities.login.LoginActivity"
+            android:name=".features.login.RegisterActivity"
+            android:parentActivityName=".features.login.LoginActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".activities.camera.ARCameraActivity" />
-        <activity android:name=".activities.maps.SecretDetailActivity"
-            android:parentActivityName=".activities.maps.MapsActivity"/>
-        <activity android:name=".activities.maps.CommentActivity"
-            android:parentActivityName=".activities.maps.MapsActivity"/>
-        <activity android:name=".activities.maps.ShareGalleryActivity"
-            android:parentActivityName=".activities.maps.MapsActivity">
+        <activity android:name="com.valentingonzalez.turistear.features.camera.ARCameraActivity" />
+        <activity android:name="com.valentingonzalez.turistear.features.secret.SecretDetailActivity"
+            android:parentActivityName="com.valentingonzalez.turistear.features.map.MapsActivity"/>
+        <activity android:name="com.valentingonzalez.turistear.features.comments.CommentActivity"
+            android:parentActivityName="com.valentingonzalez.turistear.features.map.MapsActivity"/>
+        <activity android:name="com.valentingonzalez.turistear.features.share.ShareGalleryActivity"
+            android:parentActivityName="com.valentingonzalez.turistear.features.map.MapsActivity">
             <intent-filter>
                 <action
                     android:name="android.intent.action.PICK"/>
@@ -81,8 +81,8 @@
                 <data android:mimeType="image/*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.maps.SearchOptionsActivity"
-            android:parentActivityName=".activities.maps.MapsActivity"
+        <activity android:name="com.valentingonzalez.turistear.features.search.SearchOptionsActivity"
+            android:parentActivityName="com.valentingonzalez.turistear.features.map.MapsActivity"
             android:windowSoftInputMode="stateHidden"/>
     </application>
 

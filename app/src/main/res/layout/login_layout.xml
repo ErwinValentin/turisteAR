@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="#aaa"
         android:padding="20dp"
-        tools:context=".activities.login.LoginActivity">
+        tools:context=".features.login.LoginActivity">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/appCompatImageView"
